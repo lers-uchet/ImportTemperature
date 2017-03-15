@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Lers.Core;
 
 namespace ImportTemperatureMeteoInfo
@@ -8,7 +9,7 @@ namespace ImportTemperatureMeteoInfo
 	class LersTemperatureSaver
 	{
 		private Lers.LersServer server;
-		
+
 
 		public LersTemperatureSaver()
 		{
@@ -24,9 +25,9 @@ namespace ImportTemperatureMeteoInfo
 			this.server.Connect(server, (ushort)port, authInfo);
 		}
 
-		public void Save(List<TemperatureRecord> records, string territoryName)
+		public async Task Save(List<TemperatureRecord> records, string territoryName)
 		{
-			var territory = GetTerritory(territoryName);
+			var territory = await GetTerritory(territoryName);
 
 			if (territory == null)
 			{
@@ -45,7 +46,7 @@ namespace ImportTemperatureMeteoInfo
 			this.server.OutdoorTemperature.Set(outdoorTemp.ToArray());
 		}
 
-		private Territory GetTerritory(string territoryName)
+		private async Task<Territory> GetTerritory(string territoryName)
 		{
 			if (string.IsNullOrEmpty(territoryName))
 			{
@@ -53,7 +54,9 @@ namespace ImportTemperatureMeteoInfo
 			}
 			else
 			{
-				return server.Territories.GetList().Where(x => x.Name == territoryName).FirstOrDefault();
+				var list = await server.Territories.GetListAsync();
+
+				return list.Where(x => x.Name == territoryName).FirstOrDefault();
 			}
 		}
 

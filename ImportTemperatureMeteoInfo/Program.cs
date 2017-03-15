@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ImportTemperatureMeteoInfo
@@ -29,6 +27,12 @@ namespace ImportTemperatureMeteoInfo
 
 		static void Main(string[] args)
 		{
+			Entry(args).Wait();
+		}
+
+
+		static async Task Entry(string[] args)
+		{
 			try
 			{
 				var options = new ImportOptions();
@@ -37,7 +41,7 @@ namespace ImportTemperatureMeteoInfo
 
 				var archiveHome = DownloadUrl(WeatherArchiveHome);
 
-				// Получаем URL города.			
+				// Получаем URL города.
 				string cityUrl = GetCityUrl(archiveHome, options.SourceCity);
 
 				Console.WriteLine($"Загрузка данных будет произведена с адреса '{cityUrl}'");
@@ -80,7 +84,7 @@ namespace ImportTemperatureMeteoInfo
 		/// <returns></returns>
 		private static string GetCityUrl(string archiveHome, string city)
 		{
-			// Грузим домашную страницу, на которой есть перечень городов			
+			// Грузим домашную страницу, на которой есть перечень городов
 
 			var territories = MeteoInfoParser.ParseOptions(archiveHome, "stations");
 
@@ -120,9 +124,16 @@ namespace ImportTemperatureMeteoInfo
 
 					string hourContent = DownloadUrl(hourUrl);
 
-					float value = MeteoInfoParser.ExtractTemperature(hourContent);
+					float? value = MeteoInfoParser.ExtractTemperature(hourContent);
 
-					result.Add(new TemperatureRecord { Date = localTime, Temperature = value });
+					if (value.HasValue)
+					{
+						result.Add(new TemperatureRecord { Date = localTime, Temperature = value.Value });
+					}
+					else
+					{
+						Console.WriteLine($"Не найдена температура за {localTime}");
+					}
 				}
 			}
 
@@ -138,7 +149,7 @@ namespace ImportTemperatureMeteoInfo
 		/// <param name="password"></param>
 		/// <param name="destinationTerritory"></param>
 		/// <param name="temps"></param>
-		private static void SaveTemperatures(string server, ushort port, string login, string password, string destinationTerritory, List<TemperatureRecord> temps)
+		private static async void SaveTemperatures(string server, ushort port, string login, string password, string destinationTerritory, List<TemperatureRecord> temps)
 		{
 			var tempGroups = from t in temps
 							 group t.Temperature
@@ -161,11 +172,11 @@ namespace ImportTemperatureMeteoInfo
 			var tempSaver = new LersTemperatureSaver();
 			tempSaver.Connect(server, port, login, password);
 
-			tempSaver.Save(averageTemperatures, destinationTerritory);
+			await tempSaver.Save(averageTemperatures, destinationTerritory);
 
 			tempSaver.Close();
 		}
-		
+
 
 		private static string DownloadUrl(string url)
 		{
@@ -177,9 +188,9 @@ namespace ImportTemperatureMeteoInfo
 
 				var rawBytes = Encoding.Default.GetBytes(rawString);
 
-				return Encoding.UTF8.GetString(rawBytes);				
+				return Encoding.UTF8.GetString(rawBytes);
 			}
-		}		
+		}
 
 		private static Dictionary<DateTime, string> ParseTimeStamps(Dictionary<string, string> raw)
 		{
@@ -193,6 +204,6 @@ namespace ImportTemperatureMeteoInfo
 			}
 
 			return result;
-		}		
+		}
 	}
 }

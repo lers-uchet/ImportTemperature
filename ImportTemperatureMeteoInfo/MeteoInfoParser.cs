@@ -44,11 +44,13 @@ namespace ImportTemperatureMeteoInfo
 			return result;
 		}
 
-		public static float ExtractTemperature(string hourContent)
+		public static float? ExtractTemperature(string hourContent)
 		{
 			var strings = Regex.Split(hourContent, Environment.NewLine);
 
 			var pattern = new Regex(@"^\<td class=pogodacell\>\<b\>(?<temperature>[\+\-0-9\.]+)\</b\>\</td\>$");
+
+			float? result = null;
 
 			foreach (var str in strings)
 			{
@@ -58,11 +60,13 @@ namespace ImportTemperatureMeteoInfo
 				{
 					string sTemp = match.Groups["temperature"].Value;
 
-					return float.Parse(sTemp, System.Globalization.CultureInfo.InvariantCulture);
+					result = float.Parse(sTemp, System.Globalization.CultureInfo.InvariantCulture);
+
+					break;
 				}
 			}
 
-			throw new Exception("На странице не найдена температура наружного воздуха.");
+			return result;
 		}
 
 		private static Option GetOption(string str)

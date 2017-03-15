@@ -5,16 +5,57 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImportTemperatureMeteoInfo", "ImportTemperatureMeteoInfo\ImportTemperatureMeteoInfo.csproj", "{7EEE706D-5908-4258-8A96-DE2461D10825}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lers.System", "..\..\trunk\Framework\Lers.System\Lers.System.csproj", "{78302BFB-2CA1-4EF4-998E-CF137CF21922}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Deploy|Any CPU = Deploy|Any CPU
+		Deploy|x64 = Deploy|x64
+		Deploy|x86 = Deploy|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{7EEE706D-5908-4258-8A96-DE2461D10825}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7EEE706D-5908-4258-8A96-DE2461D10825}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EEE706D-5908-4258-8A96-DE2461D10825}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7EEE706D-5908-4258-8A96-DE2461D10825}.Debug|x64.Build.0 = Debug|Any CPU
+		{7EEE706D-5908-4258-8A96-DE2461D10825}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7EEE706D-5908-4258-8A96-DE2461D10825}.Debug|x86.Build.0 = Debug|Any CPU
+		{7EEE706D-5908-4258-8A96-DE2461D10825}.Deploy|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EEE706D-5908-4258-8A96-DE2461D10825}.Deploy|Any CPU.Build.0 = Debug|Any CPU
+		{7EEE706D-5908-4258-8A96-DE2461D10825}.Deploy|x64.ActiveCfg = Debug|Any CPU
+		{7EEE706D-5908-4258-8A96-DE2461D10825}.Deploy|x64.Build.0 = Debug|Any CPU
+		{7EEE706D-5908-4258-8A96-DE2461D10825}.Deploy|x86.ActiveCfg = Debug|Any CPU
+		{7EEE706D-5908-4258-8A96-DE2461D10825}.Deploy|x86.Build.0 = Debug|Any CPU
 		{7EEE706D-5908-4258-8A96-DE2461D10825}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EEE706D-5908-4258-8A96-DE2461D10825}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EEE706D-5908-4258-8A96-DE2461D10825}.Release|x64.ActiveCfg = Release|Any CPU
+		{7EEE706D-5908-4258-8A96-DE2461D10825}.Release|x64.Build.0 = Release|Any CPU
+		{7EEE706D-5908-4258-8A96-DE2461D10825}.Release|x86.ActiveCfg = Release|Any CPU
+		{7EEE706D-5908-4258-8A96-DE2461D10825}.Release|x86.Build.0 = Release|Any CPU
+		{78302BFB-2CA1-4EF4-998E-CF137CF21922}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78302BFB-2CA1-4EF4-998E-CF137CF21922}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78302BFB-2CA1-4EF4-998E-CF137CF21922}.Debug|x64.ActiveCfg = Debug|x64
+		{78302BFB-2CA1-4EF4-998E-CF137CF21922}.Debug|x64.Build.0 = Debug|x64
+		{78302BFB-2CA1-4EF4-998E-CF137CF21922}.Debug|x86.ActiveCfg = Debug|x86
+		{78302BFB-2CA1-4EF4-998E-CF137CF21922}.Debug|x86.Build.0 = Debug|x86
+		{78302BFB-2CA1-4EF4-998E-CF137CF21922}.Deploy|Any CPU.ActiveCfg = Deploy|Any CPU
+		{78302BFB-2CA1-4EF4-998E-CF137CF21922}.Deploy|Any CPU.Build.0 = Deploy|Any CPU
+		{78302BFB-2CA1-4EF4-998E-CF137CF21922}.Deploy|x64.ActiveCfg = Deploy|x64
+		{78302BFB-2CA1-4EF4-998E-CF137CF21922}.Deploy|x64.Build.0 = Deploy|x64
+		{78302BFB-2CA1-4EF4-998E-CF137CF21922}.Deploy|x86.ActiveCfg = Deploy|x86
+		{78302BFB-2CA1-4EF4-998E-CF137CF21922}.Deploy|x86.Build.0 = Deploy|x86
+		{78302BFB-2CA1-4EF4-998E-CF137CF21922}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78302BFB-2CA1-4EF4-998E-CF137CF21922}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78302BFB-2CA1-4EF4-998E-CF137CF21922}.Release|x64.ActiveCfg = Release|x64
+		{78302BFB-2CA1-4EF4-998E-CF137CF21922}.Release|x64.Build.0 = Release|x64
+		{78302BFB-2CA1-4EF4-998E-CF137CF21922}.Release|x86.ActiveCfg = Release|x86
+		{78302BFB-2CA1-4EF4-998E-CF137CF21922}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

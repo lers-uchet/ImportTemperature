@@ -53,8 +53,10 @@ namespace ImportTemperatureMeteoInfo
 
 				// По умолчанию импортируем данные только за предыдущий день.
 				// Этот параметр может быть переопределён из командной строки.
-				var importStart = DateTime.Now.Date.AddDays(-1);
 
+				var importStart = DateTime.Now.Date.AddDays(-options.ImportDays);
+
+				// Если пользователь определил начальную дату для импорта, используем её.
 				if (!string.IsNullOrEmpty(options.ImportStartDate))
 				{
 					importStart = DateTime.ParseExact(options.ImportStartDate, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
@@ -68,7 +70,7 @@ namespace ImportTemperatureMeteoInfo
 
 				var temps = ReadCityTemperatures(cityUrl, options.TerritoryMoscowOffset, timeStamps, importStart, importEnd);
 
-				SaveTemperatures(options.Server, (ushort)options.ServerPort, options.Login, options.Password, options.DestinationTerritory, temps);
+				await SaveTemperatures(options.Server, (ushort)options.ServerPort, options.Login, options.Password, options.DestinationTerritory, options.MissingOnly, temps);
 			}
 			catch (Exception exc)
 			{
@@ -148,13 +150,14 @@ namespace ImportTemperatureMeteoInfo
 		/// <param name="login"></param>
 		/// <param name="password"></param>
 		/// <param name="destinationTerritory"></param>
+		/// <param name="missingOnly">Импортировать только данные, которых ещё нет в справочнике.</param>
 		/// <param name="temps"></param>
-		private static async void SaveTemperatures(string server, ushort port, string login, string password, string destinationTerritory, List<TemperatureRecord> temps)
+		private static async Task SaveTemperatures(string server, ushort port, string login, string password, string destinationTerritory, bool missingOnly, List<TemperatureRecord> temps)
 		{
-			var tempGroups = from t in temps
-							 group t.Temperature
-									by t.Date.Date
-									into g
+			var tempGroups = from	t in temps
+							 group	t.Temperature
+							 by		t.Date.Date
+							 into	g
 							 select g;
 
 			var averageTemperatures = new List<TemperatureRecord>();
@@ -172,7 +175,7 @@ namespace ImportTemperatureMeteoInfo
 			var tempSaver = new LersTemperatureSaver();
 			tempSaver.Connect(server, port, login, password);
 
-			await tempSaver.Save(averageTemperatures, destinationTerritory);
+			await tempSaver.Save(averageTemperatures, destinationTerritory, missingOnly);
 
 			tempSaver.Close();
 		}

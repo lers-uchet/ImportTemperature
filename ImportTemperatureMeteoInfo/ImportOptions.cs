@@ -44,7 +44,7 @@ namespace ImportTemperatureMeteoInfo
 		public string Password { get; set; }
 
 		/// <summary>
-		/// Наименование территории, для которой сохраняется Тнв. 
+		/// Наименование территории, для которой сохраняется Тнв.
 		/// Если пустая - Тнв сохраняется для текущей территории.
 		/// </summary>
 		[Option(longName:"destTerritory", DefaultValue = "", Required = false)]
@@ -56,5 +56,18 @@ namespace ImportTemperatureMeteoInfo
 		/// </summary>
 		[Option(longName: "importStart", DefaultValue = "", Required = false)]
 		public string ImportStartDate { get; set; }
+
+		/// <summary>
+		/// Количество дней, за которое проводится импорт данных.
+		/// </summary>
+		[Option(longName: "importDays", DefaultValue = 1, Required = false)]
+		public int ImportDays { get; set; }
+
+		/// <summary>
+		/// Флаг указывает что нужно импортировать только температуры, которых ещё нет в справочнике.
+		/// </summary>
+		[Option(longName: "missingOnly", DefaultValue = false, Required = false,
+				HelpText = "Импортировать только температуры, которых ещё нет в справочнике. Существующие температуры не перезаписываются.")]
+		public bool MissingOnly { get; set; }
 	}
 }

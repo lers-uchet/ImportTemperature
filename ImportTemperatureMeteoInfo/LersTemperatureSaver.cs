@@ -10,7 +10,6 @@ namespace ImportTemperatureMeteoInfo
 	{
 		private Lers.LersServer server;
 
-
 		public LersTemperatureSaver()
 		{
 			this.server = new Lers.LersServer("Meteo Info Import");
@@ -25,7 +24,7 @@ namespace ImportTemperatureMeteoInfo
 			this.server.Connect(server, (ushort)port, authInfo);
 		}
 
-		public async Task Save(List<TemperatureRecord> records, string territoryName)
+		public async Task Save(List<TemperatureRecord> records, string territoryName, bool missingOnly)
 		{
 			var territory = await GetTerritory(territoryName);
 
@@ -34,13 +33,27 @@ namespace ImportTemperatureMeteoInfo
 				throw new Exception($"Территория '{territoryName}' не найдена на сервере.");
 			}
 
+			IDictionary<DateTime, Lers.Data.OutdoorTemperatureRecord> existingTemperature = null;
+
+			if (missingOnly)
+			{
+				// Если импортируются только отсутствующие данные, получаем существующую температуру наружного воздуха.
+
+				existingTemperature = this.server.OutdoorTemperature.Get()
+					.Where(x => x.Territory.Id == territory.Id)
+					.ToDictionary(x => x.Date);
+			}
+
 			var outdoorTemp = new List<Lers.Data.OutdoorTemperatureRecord>();
 
 			foreach (var record in records)
 			{
-				var temp = new Lers.Data.OutdoorTemperatureRecord(record.Date, territory);
-				temp.Value = record.Temperature;
-				outdoorTemp.Add(temp);
+				if (!missingOnly || !existingTemperature.ContainsKey(record.Date))
+				{
+					var temp = new Lers.Data.OutdoorTemperatureRecord(record.Date, territory);
+					temp.Value = record.Temperature;
+					outdoorTemp.Add(temp);
+				}
 			}
 
 			this.server.OutdoorTemperature.Set(outdoorTemp.ToArray());

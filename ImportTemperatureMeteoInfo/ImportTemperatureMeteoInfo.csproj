@@ -40,6 +40,7 @@
       <HintPath>..\packages\CommandLineParser.1.9.71\lib\net45\CommandLine.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Lers.System, Version=3.0.0.0, Culture=neutral, PublicKeyToken=e7c6d6299713498c, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -60,12 +61,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\trunk\Framework\Lers.System\Lers.System.csproj">
-      <Project>{78302bfb-2ca1-4ef4-998e-cf137cf21922}</Project>
-      <Name>Lers.System</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

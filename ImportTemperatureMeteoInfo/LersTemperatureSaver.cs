@@ -26,6 +26,10 @@ namespace ImportTemperatureMeteoInfo
 
 		public async Task Save(List<TemperatureRecord> records, string territoryName, bool missingOnly)
 		{
+			// Обнуляем таймауты на выполнение запросов, т.к. сервер может быть занят обработкой данных:
+			// "Ошибка чтения среднесуточных температур. Истекло время ожидания запроса "Просмотр справочника температур".
+			this.server.DefaultRequestTimeout = 0;
+
 			var territory = await GetTerritory(territoryName);
 
 			if (territory == null)
@@ -55,11 +59,7 @@ namespace ImportTemperatureMeteoInfo
 					outdoorTemp.Add(temp);
 				}
 			}
-
-			// Обнуляем таймаут на выполнение запроса, т.к. сервер может быть занят обработкой данных.
-			// Также сохранение данных может запустить расчет и диагностику, что может привести к выходу таймаута.
-			this.server.DefaultRequestTimeout = 0;
-
+			
 			this.server.OutdoorTemperature.Set(outdoorTemp.ToArray());
 		}
 

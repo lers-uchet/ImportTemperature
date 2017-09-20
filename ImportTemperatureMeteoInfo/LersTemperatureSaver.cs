@@ -56,6 +56,10 @@ namespace ImportTemperatureMeteoInfo
 				}
 			}
 
+			// Обнуляем таймаут на выполнение запроса, т.к. сервер может быть занят обработкой данных.
+			// Также сохранение данных может запустить расчет и диагностику, что может привести к выходу таймаута.
+			this.server.DefaultRequestTimeout = 0;
+
 			this.server.OutdoorTemperature.Set(outdoorTemp.ToArray());
 		}
 

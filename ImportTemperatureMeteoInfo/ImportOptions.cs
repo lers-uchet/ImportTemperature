@@ -16,7 +16,7 @@ namespace ImportTemperatureMeteoInfo
 		/// <summary>
 		/// Смещение города относительно московского времени.
 		/// </summary>
-		[Option (longName:"mscoffset", Required = true, HelpText = "Смещение часового пояса выбранной территории относительно московсокго времени (в часах)")]
+		[Option (longName:"mscoffset", Required = true, HelpText = "Смещение часового пояса выбранной территории относительно Московского времени (в часах)")]
 		public int TerritoryMoscowOffset { get; set; }
 
 		/// <summary>

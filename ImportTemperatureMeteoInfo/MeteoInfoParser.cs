@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace ImportTemperatureMeteoInfo
@@ -7,7 +8,7 @@ namespace ImportTemperatureMeteoInfo
 	/// <summary>
 	/// Проводит разбор структуры страниц сайта meteoinfo.ru
 	/// </summary>
-	static class MeteoInfoParser
+	internal static class MeteoInfoParser
 	{
 		public static Dictionary<string, string> ParseOptions(string homePageString, string selectName)
 		{
@@ -15,28 +16,15 @@ namespace ImportTemperatureMeteoInfo
 
 			string[] homePageContent = Regex.Split(homePageString, Environment.NewLine);
 
-			bool startFound = false;
-
 			foreach (var str in homePageContent)
 			{
-				if (!startFound)
+				if (ContainsSelector(selectName, str))
 				{
-					if (ContainsSelector(selectName, str))
-					{
-						startFound = true;
-					}
-				}
-				else if (ContainsSelectorEnd(str))
-				{
-					break;
-				}
-				else
-				{
-					var region = GetOption(str);
+					var option = GetOptions(str);
 
-					if (region != null)
+					if (option != null)
 					{
-						result[region.Name] = region.UrlPart;
+						result = option.ToDictionary(x => x.Name, y => y.UrlPart);
 					}
 				}
 			}
@@ -46,53 +34,74 @@ namespace ImportTemperatureMeteoInfo
 
 		public static float? ExtractTemperature(string hourContent)
 		{
-			var strings = Regex.Split(hourContent, Environment.NewLine);
+			// Сейчас сайт возвращает информацию по температурам в видела html кода таблицы, среди неё нам необходим найти данную строку и выделить
+			// из неё температуру.
+			//<td width=\"50%\"  style=\"border-bottom: 1px solid #D3D3D3;\"  align=\"right\">Температура воздуха, &deg;C</td><td width=\"50%\"  style=\"border-bottom: 1px solid #D3D3D3;\"  align=\"center\">-10.6</td>
 
-			var pattern = new Regex(@"^\<td class=pogodacell\>\<b\>(?<temperature>[\+\-0-9\.]+)\</b\>\</td\>$");
+			var pattern = new Regex(@"\<td width=\\""\d+%\\""\s+style=\\"".{35}\s\salign=.{10}Температура\sвоздуха.{93}>(?<temperature>\D?\d+\.?\d?)\<\/td>");
 
 			float? result = null;
 
-			foreach (var str in strings)
+			var match = pattern.Match(hourContent);
+
+			if (match.Success)
 			{
-				var match = pattern.Match(str.Trim());
+				string sTemp = match.Groups["temperature"].Value;
 
-				if (match.Success)
-				{
-					string sTemp = match.Groups["temperature"].Value;
-
-					result = float.Parse(sTemp, System.Globalization.CultureInfo.InvariantCulture);
-
-					break;
-				}
+				result = float.Parse(sTemp, System.Globalization.CultureInfo.InvariantCulture);
 			}
 
 			return result;
 		}
 
-		private static Option GetOption(string str)
+		private static IEnumerable<Option> GetOptions(string str)
 		{
-			var pattern = new Regex(@"^\<option value\=""(?<regionUrlPart>[a-zA-Z0-9\-/]+)""( selected)?>(?<regionName>.+)\</option\>");
+			// Список представляет собой выпадающий список, содержащий подобные записи. необходимо выделить Id и название.
+			// <option value="1987">Абакан, Россия, Хакасия республика</option>
+			var pattern = new Regex(@"\<option value\=""(?<regionUrlPart>[a-zA-Z0-9\-/]+)"">(?<regionName>\D+)\</option\>");
 
-			var match = pattern.Match(str);
+			var matches = pattern.Matches(str);
 
-			if (!match.Success)
+			if (matches.Count == 0)
 			{
-				return null;
+				yield return null;
 			}
-			else
+
+			foreach (Match match in matches)
 			{
-				return new Option(match.Groups["regionUrlPart"].Value, match.Groups["regionName"].Value);
+				yield return new Option(match.Groups["regionUrlPart"].Value, match.Groups["regionName"].Value);
 			}
 		}
 
 		private static bool ContainsSelector(string selectorName, string str)
 		{
-			return str.Contains($"<select name={selectorName}");
+			return str.Contains($"<select name=\"{selectorName}\"");
 		}
 
 		private static bool ContainsSelectorEnd(string str)
 		{
 			return str.Contains("</select>");
+		}
+
+		public static Dictionary<DateTime, string> ParseTimeStamps(string raw)
+		{
+			var result = new Dictionary<DateTime, string>();
+
+			// Метки времени с идентификаторами приходят в виде строки содержащей подобные записи:
+			// <option value="1517263200">29-01-2018 22:00</option>
+			// Нам необходимо выделить идентификатор, для дальнейшего выполнения POST запросов и метку времени.
+			var pattern = new Regex(@"\<option value\=\\""(?<dataId>[0-9]+)\\"">(?<dateTime>\d\d-\d\d-\d{4}\s\d\d:\d\d)\</option\>");
+
+			var matches = pattern.Matches(raw);
+
+			foreach (Match match in matches)
+			{
+				var dateTime = DateTime.ParseExact(match.Groups["dateTime"].Value, "dd-MM-yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+
+				result[dateTime] = match.Groups["dataId"].Value;
+			}
+
+			return result;
 		}
 	}
 }

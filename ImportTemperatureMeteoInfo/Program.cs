@@ -1,37 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ImportTemperatureMeteoInfo
 {
-	class TemperatureRecord
+	internal class TemperatureRecord
 	{
 		public DateTime Date;
 		public float Temperature;
 	};
 
-	class Program
+	internal class Program
 	{
 		/// <summary>
 		/// Адрес архива погоды для Москвы. На этой странице есть перечень всех городов
 		/// и меток времени, за которые есть данные.
 		/// </summary>
-		const string WeatherArchiveHome = "http://meteoinfo.ru/archive-pogoda/russia/moscow";
+		private const string WeatherArchiveHome = "https://meteoinfo.ru/archive-pogoda/russia/moscow";
 
 		/// <summary>
-		/// Адрес, по которому будет загружаться погода.
+		/// Адрес, по которому будет выполнятся POST запросы, для получения идентификаторов меток времени и данные по температуре.
 		/// </summary>
-		const string HourArchiveHomeUrl = "http://meteoinfo.ru/archive-pogoda";
+		private const string HourArchiveHomeUrl = "https://meteoinfo.ru/hmc-output/observ/obs_arch.php";
 
-		static void Main(string[] args)
+		private static void Main(string[] args)
 		{
 			Entry(args).Wait();
 		}
 
-
-		static async Task Entry(string[] args)
+		private static async Task Entry(string[] args)
 		{
 			try
 			{
@@ -42,14 +45,14 @@ namespace ImportTemperatureMeteoInfo
 				var archiveHome = DownloadUrl(WeatherArchiveHome);
 
 				// Получаем URL города.
-				string cityUrl = GetCityUrl(archiveHome, options.SourceCity);
+				string cityId = GetCityUrl(archiveHome, options.SourceCity);
 
-				Console.WriteLine($"Загрузка данных будет произведена с адреса '{cityUrl}'");
+				Console.WriteLine($"Идентификатор города '{cityId}'");
 
 				// Получаем список всех меток времени, по которым есть данные
-				var timeStampsRaw = MeteoInfoParser.ParseOptions(archiveHome, "date");
+				var timeStampsRaw = await GetTimeStamps(cityId);
 
-				var timeStamps = ParseTimeStamps(timeStampsRaw);
+				var timeStamps = MeteoInfoParser.ParseTimeStamps(timeStampsRaw);
 
 				// По умолчанию импортируем данные только за предыдущий день.
 				// Этот параметр может быть переопределён из командной строки.
@@ -62,13 +65,13 @@ namespace ImportTemperatureMeteoInfo
 					importStart = DateTime.ParseExact(options.ImportStartDate, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
 				}
 
-				// Импорт данных осуществляется до сегодняшенго дня.
+				// Импорт данных осуществляется до сегодняшнего дня.
 				var importEnd = DateTime.Now.Date;
 
 				// Считываем данные по температурам.
 				Console.WriteLine($"Чтение температур с {importStart} по {importEnd}");
 
-				var temps = ReadCityTemperatures(cityUrl, options.TerritoryMoscowOffset, timeStamps, importStart, importEnd);
+				var temps = await ReadCityTemperatures(cityId, options.TerritoryMoscowOffset, timeStamps, importStart, importEnd);
 
 				await SaveTemperatures(options.Server, (ushort)options.ServerPort, options.Login, options.Password, options.DestinationTerritory, options.MissingOnly, temps);
 			}
@@ -89,9 +92,9 @@ namespace ImportTemperatureMeteoInfo
 		/// <returns></returns>
 		private static string GetCityUrl(string archiveHome, string city)
 		{
-			// Грузим домашную страницу, на которой есть перечень городов
+			// Грузим домашнюю страницу, на которой есть перечень городов
 
-			var territories = MeteoInfoParser.ParseOptions(archiveHome, "stations");
+			var territories = MeteoInfoParser.ParseOptions(archiveHome, "id_city");
 
 			var cityInfo = territories.Keys.Where(x => x.StartsWith(city)).FirstOrDefault();
 
@@ -112,7 +115,7 @@ namespace ImportTemperatureMeteoInfo
 		/// <param name="importStart"></param>
 		/// <param name="importEnd"></param>
 		/// <returns></returns>
-		private static List<TemperatureRecord> ReadCityTemperatures(string cityUrl, int cityTimeOffset, Dictionary<DateTime, string> timeStamps, DateTime importStart, DateTime importEnd)
+		private static async Task<List<TemperatureRecord>> ReadCityTemperatures(string cityUrl, int cityTimeOffset, Dictionary<DateTime, string> timeStamps, DateTime importStart, DateTime importEnd)
 		{
 			var result = new List<TemperatureRecord>();
 
@@ -125,19 +128,26 @@ namespace ImportTemperatureMeteoInfo
 
 				if (localTime >= importStart && localTime < importEnd)
 				{
-					string hourUrl = $"{HourArchiveHomeUrl}{cityUrl}{kvp.Value}";
+					string hourContent = await GetTimeData(cityUrl, kvp.Value);
 
-					string hourContent = DownloadUrl(hourUrl);
-
-					float? value = MeteoInfoParser.ExtractTemperature(hourContent);
-
-					if (value.HasValue)
+					if (string.IsNullOrWhiteSpace(hourContent))
 					{
-						result.Add(new TemperatureRecord { Date = localTime, Temperature = value.Value });
+						Console.WriteLine($"Не удалось получить температуру за {localTime}");
 					}
 					else
 					{
-						Console.WriteLine($"Не найдена температура за {localTime}");
+						float? value = MeteoInfoParser.ExtractTemperature(hourContent);
+
+						if (value.HasValue)
+						{
+							result.Add(new TemperatureRecord { Date = localTime, Temperature = value.Value });
+
+							Console.WriteLine($"Получена температура за {localTime}");
+						}
+						else
+						{
+							Console.WriteLine($"Не найдена температура за {localTime}");
+						}
 					}
 				}
 			}
@@ -157,10 +167,10 @@ namespace ImportTemperatureMeteoInfo
 		/// <param name="temps"></param>
 		private static async Task SaveTemperatures(string server, ushort port, string login, string password, string destinationTerritory, bool missingOnly, List<TemperatureRecord> temps)
 		{
-			var tempGroups = from	t in temps
-							 group	t.Temperature
-							 by		t.Date.Date
-							 into	g
+			var tempGroups = from t in temps
+							 group t.Temperature
+							 by t.Date.Date
+							 into g
 							 select g;
 
 			var averageTemperatures = new List<TemperatureRecord>();
@@ -183,33 +193,62 @@ namespace ImportTemperatureMeteoInfo
 			tempSaver.Close();
 		}
 
-
 		private static string DownloadUrl(string url)
 		{
-			using (var webClient = new System.Net.WebClient())
+			using (var webClient = new WebClient())
 			{
+				webClient.Encoding = Encoding.UTF8;
+
 				Console.WriteLine($"Загрузка страницы '{url}'");
 
-				var rawString = webClient.DownloadString(url);
-
-				var rawBytes = Encoding.Default.GetBytes(rawString);
-
-				return Encoding.UTF8.GetString(rawBytes);
+				return webClient.DownloadString(url);
 			}
 		}
 
-		private static Dictionary<DateTime, string> ParseTimeStamps(Dictionary<string, string> raw)
+		private static async Task<string> GetTimeData(string cityId, string dateId)
 		{
-			var result = new Dictionary<DateTime, string>();
+			JArray dataArray = await Post(HourArchiveHomeUrl, cityId, dateId);
 
-			foreach (var kvp in raw)
+			if (dataArray[1].ToString().Replace("[", string.Empty).Replace("]", string.Empty).Trim() == dateId)
 			{
-				var dateTime = DateTime.ParseExact(kvp.Key, "dd-MM-yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture);
-
-				result[dateTime] = kvp.Value;
+				return dataArray[3].ToString();
 			}
 
-			return result;
+			return string.Empty;
+		}
+
+		private static async Task<string> GetTimeStamps(string cityId)
+		{
+			JArray dataArray = await Post(HourArchiveHomeUrl, cityId, "0");
+
+			return dataArray[2].ToString();
+		}
+
+		private static async Task<JArray> Post(string url, string cityId, string dataId)
+		{
+			// Раньше сайт возвращал всю страницу сразу. Теперь список меток времени и температуры приходят отдельным POST запросом.
+			// Причём всегда возвращается и список меток времени и запрошенная температура.
+			// Для получения списка меток времени можно выполнить данный запрос с передачей dataId = 0.
+			// Ответ от сервера представлен в Json формате следующей структуры:
+			// [id местности][id метки времени][список всех доступных меток времени с идентификаторами][таблица с данными на запрошенную метку времени]
+			var values = new Dictionary<string, string>
+			{
+				{ "lang", "ru-RU" },
+				{ "id_city", cityId },
+				{ "dt", dataId },
+				{ "has_db", "1" }
+			};
+
+			using (var client = new HttpClient())
+			{
+				var content = new FormUrlEncodedContent(values);
+
+				var response = await client.PostAsync(url, content);
+
+				var responseString = await response.Content.ReadAsStringAsync();
+
+				return JsonConvert.DeserializeObject<JArray>(responseString);
+			}
 		}
 	}
 }

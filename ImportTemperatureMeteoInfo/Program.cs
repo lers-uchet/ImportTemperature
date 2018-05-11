@@ -42,10 +42,7 @@ namespace ImportTemperatureMeteoInfo
 
 				CommandLine.Parser.Default.ParseArgumentsStrict(args, options);
 
-				var archiveHome = DownloadUrl(WeatherArchiveHome);
-
-				// Получаем URL города.
-				string cityId = GetCityUrl(archiveHome, options.SourceCity);
+				string cityId = await GetCityId(WeatherArchiveHome, options.SourceCity);
 
 				Console.WriteLine($"Идентификатор города '{cityId}'");
 
@@ -193,16 +190,20 @@ namespace ImportTemperatureMeteoInfo
 			tempSaver.Close();
 		}
 
-		private static string DownloadUrl(string url)
+		private static async Task<string> GetCityId(string url, string cityName)
 		{
-			using (var webClient = new WebClient())
+			var dataArray = await Post(HourArchiveHomeUrl, "0", "0");
+
+			var cityList = MeteoInfoParser.GetOptions(dataArray[4].ToString().Replace("[", string.Empty).Replace("]", string.Empty).Trim()).ToList();
+
+			var cityInfo = cityList.Find(x => x.Name.Contains(cityName));
+
+			if (cityInfo == null)
 			{
-				webClient.Encoding = Encoding.UTF8;
-
-				Console.WriteLine($"Загрузка страницы '{url}'");
-
-				return webClient.DownloadString(url);
+				throw new Exception($"На сайте не найден город '{cityName}'");
 			}
+
+			return cityInfo.UrlPart;
 		}
 
 		private static async Task<string> GetTimeData(string cityId, string dateId)
@@ -236,7 +237,8 @@ namespace ImportTemperatureMeteoInfo
 				{ "lang", "ru-RU" },
 				{ "id_city", cityId },
 				{ "dt", dataId },
-				{ "has_db", "1" }
+				{ "has_db", "1" },
+				{ "dop", "42" }
 			};
 
 			using (var client = new HttpClient())

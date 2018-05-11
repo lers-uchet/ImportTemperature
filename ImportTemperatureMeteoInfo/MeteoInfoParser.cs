@@ -54,11 +54,11 @@ namespace ImportTemperatureMeteoInfo
 			return result;
 		}
 
-		private static IEnumerable<Option> GetOptions(string str)
+		public static IEnumerable<Option> GetOptions(string str)
 		{
 			// Список представляет собой выпадающий список, содержащий подобные записи. необходимо выделить Id и название.
 			// <option value="1987">Абакан, Россия, Хакасия республика</option>
-			var pattern = new Regex(@"\<option value\=""(?<regionUrlPart>[a-zA-Z0-9\-/]+)"">(?<regionName>\D+)\</option\>");
+			var pattern = new Regex(@"<option  value\=\\""(?<regionUrlPart>\d+)\\"">(?<regionName>\D+)\<\/option\>");
 
 			var matches = pattern.Matches(str);
 

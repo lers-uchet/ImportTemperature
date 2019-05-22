@@ -88,15 +88,16 @@ namespace ImportTemperatureMeteoInfo
 			var result = new Dictionary<DateTime, string>();
 
 			// Метки времени с идентификаторами приходят в виде строки содержащей подобные записи:
-			// <option value="1517263200">29-01-2018 22:00</option>
+			// <option value="1517263200">2019-05-21 22:00</option>
 			// Нам необходимо выделить идентификатор, для дальнейшего выполнения POST запросов и метку времени.
-			var pattern = new Regex(@"\<option value\=\\""(?<dataId>[0-9]+)\\"">(?<dateTime>\d\d-\d\d-\d{4}\s\d\d:\d\d)\</option\>");
+			
+			var pattern = new Regex(@"\<option value\=\\""(?<dataId>[0-9]+)\\"">(?<dateTime>\d{4}-\d{2}-\d{2}\s\d\d:\d\d)\</option\>");
 
 			var matches = pattern.Matches(raw);
 
 			foreach (Match match in matches)
 			{
-				var dateTime = DateTime.ParseExact(match.Groups["dateTime"].Value, "dd-MM-yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+				var dateTime = DateTime.ParseExact(match.Groups["dateTime"].Value, "yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
 
 				result[dateTime] = match.Groups["dataId"].Value;
 			}

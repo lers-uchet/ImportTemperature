@@ -28,7 +28,7 @@ namespace ImportTemperatureMeteoInfo
 		/// <summary>
 		/// Порт сервера ЛЭРС УЧЁТ, на который импортируется температура.
 		/// </summary>
-		[Option(longName: "serverPort", Required = false, DefaultValue = 10000 )]
+		[Option(longName: "serverPort", Required = false, Default = 10000 )]
 		public int ServerPort { get; set; }
 
 		/// <summary>
@@ -47,26 +47,26 @@ namespace ImportTemperatureMeteoInfo
 		/// Наименование территории, для которой сохраняется Тнв.
 		/// Если пустая - Тнв сохраняется для текущей территории.
 		/// </summary>
-		[Option(longName:"destTerritory", DefaultValue = "", Required = false)]
+		[Option(longName:"destTerritory", Default = "", Required = false)]
 		public string DestinationTerritory { get; set; }
 
 		/// <summary>
 		/// Дата, начиная с которой нужно импотрировать температуру.
 		/// Если не передана, импортируются данные за вчерашний день.
 		/// </summary>
-		[Option(longName: "importStart", DefaultValue = "", Required = false)]
+		[Option(longName: "importStart", Default = "", Required = false)]
 		public string ImportStartDate { get; set; }
 
 		/// <summary>
 		/// Количество дней, за которое проводится импорт данных.
 		/// </summary>
-		[Option(longName: "importDays", DefaultValue = 1, Required = false)]
+		[Option(longName: "importDays", Default = 1, Required = false)]
 		public int ImportDays { get; set; }
 
 		/// <summary>
 		/// Флаг указывает что нужно импортировать только температуры, которых ещё нет в справочнике.
 		/// </summary>
-		[Option(longName: "missingOnly", DefaultValue = false, Required = false,
+		[Option(longName: "missingOnly", Default = false, Required = false,
 				HelpText = "Импортировать только температуры, которых ещё нет в справочнике. Существующие температуры не перезаписываются.")]
 		public bool MissingOnly { get; set; }
 	}

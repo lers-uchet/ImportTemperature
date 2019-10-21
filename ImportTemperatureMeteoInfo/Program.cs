@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using CommandLine;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -31,17 +32,17 @@ namespace ImportTemperatureMeteoInfo
 
 		private static void Main(string[] args)
 		{
-			Entry(args).Wait();
+			Parser.Default.ParseArguments<ImportOptions>(args)
+				.WithParsed(options =>
+				{
+					Entry(options).Wait();
+				});
 		}
 
-		private static async Task Entry(string[] args)
+		private static async Task Entry(ImportOptions options)
 		{
 			try
 			{
-				var options = new ImportOptions();
-
-				CommandLine.Parser.Default.ParseArgumentsStrict(args, options);
-
 				string cityId = await GetCityId(WeatherArchiveHome, options.SourceCity);
 
 				Console.WriteLine($"Идентификатор города '{cityId}'");

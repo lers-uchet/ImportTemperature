@@ -69,7 +69,7 @@ namespace ImportTemperatureMeteoInfo
 				// Считываем данные по температурам.
 				Console.WriteLine($"Чтение температур с {importStart} по {importEnd}");
 
-				var temps = await ReadCityTemperatures(cityId, options.TerritoryMoscowOffset, timeStamps, importStart, importEnd);
+				var temps = await ReadCityTemperatures(cityId, options.TerritoryUtcOffset, timeStamps, importStart, importEnd);
 
 				await SaveTemperatures(options.Server, (ushort)options.ServerPort, options.Login, options.Password, options.DestinationTerritory, options.MissingOnly, temps);
 			}
@@ -121,7 +121,8 @@ namespace ImportTemperatureMeteoInfo
 
 			foreach (var kvp in timeStamps)
 			{
-				// Все метки времени на этом сайте московские. Чтобы узнать местное время, нужно добавить смещение территории относительно Москвы.
+				// Все метки времени на этом сайте в UTC.
+				// Чтобы узнать местное время, нужно добавить смещение территории относительно UTC.
 				var localTime = kvp.Key.AddHours(cityTimeOffset);
 
 				if (localTime >= importStart && localTime < importEnd)

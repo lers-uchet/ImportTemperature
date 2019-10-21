@@ -14,10 +14,10 @@ namespace ImportTemperatureMeteoInfo
 		public string SourceCity { get; set; }
 
 		/// <summary>
-		/// Смещение города относительно московского времени.
+		/// Смещение города относительно UTC.
 		/// </summary>
-		[Option (longName:"mscoffset", Required = true, HelpText = "Смещение часового пояса выбранной территории относительно Московского времени (в часах)")]
-		public int TerritoryMoscowOffset { get; set; }
+		[Option (longName:"utcoffset", Required = true, HelpText = "Смещение часового пояса выбранной территории относительно UTC (в часах)")]
+		public int TerritoryUtcOffset { get; set; }
 
 		/// <summary>
 		/// Адрес сервера ЛЭРС УЧЁТ, на который импортируется температура.

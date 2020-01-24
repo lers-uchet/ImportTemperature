@@ -7,7 +7,7 @@ namespace ImportTemperatureMeteoInfo
 	/// <summary>
 	/// Предоставляет методы для чтения температуры с сайта.
 	/// </summary>
-	interface ITempertatureReader
+	interface ITempertatureReader : IDisposable
 	{
 		/// <summary>
 		/// Возвращает температуры с сайта.

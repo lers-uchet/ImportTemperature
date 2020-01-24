@@ -27,7 +27,7 @@ namespace ImportTemperatureMeteoInfo
 					throw new Exception("Необходимо задать токен или логин/пароль.");
 				}
 
-				var importer = new Importers.MemeoInfoReader();
+				using var importer = new Importers.PogodaIKlimatReader();
 
 				// По умолчанию импортируем данные только за предыдущий день.
 				// Этот параметр может быть переопределён из командной строки.

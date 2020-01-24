@@ -18,6 +18,7 @@ namespace ImportTemperatureMeteoInfo.Importers
 		/// </summary>
 		private const string HourArchiveHomeUrl = "https://meteoinfo.ru/hmc-output/observ/obs_arch.php";
 
+		public void Dispose() { }
 
 		public async Task<List<TemperatureRecord>> ReadTemperatures(string city, int cityUtcOffset, DateTime from, DateTime to)
 		{

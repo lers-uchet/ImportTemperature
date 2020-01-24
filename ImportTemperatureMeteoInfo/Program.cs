@@ -1,5 +1,4 @@
 ﻿using CommandLine;
-using Lers.Core;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,9 +17,16 @@ namespace ImportTemperatureMeteoInfo
 		}
 
 		private static async Task Entry(ImportOptions options)
-		{
+		{			
+			var tempSaver = new LersTemperatureSaver(new Uri(options.Server));
+
 			try
 			{
+				if (string.IsNullOrEmpty(options.Token) && (string.IsNullOrEmpty(options.Login) || string.IsNullOrEmpty(options.Password)))
+				{
+					throw new Exception("Необходимо задать токен или логин/пароль.");
+				}
+
 				var importer = new Importers.MemeoInfoReader();
 
 				// По умолчанию импортируем данные только за предыдущий день.
@@ -38,8 +44,15 @@ namespace ImportTemperatureMeteoInfo
 				var importEnd = DateTime.Now.Date;
 
 				// Подключаемся к серверу
-				var tempSaver = new LersTemperatureSaver();
-				tempSaver.Connect(options.Server, (ushort)options.ServerPort, options.Login, options.Password);
+
+				if (string.IsNullOrEmpty(options.Token))
+				{
+					await tempSaver.Authenticate(options.Login, options.Password);
+				}
+				else
+				{
+					tempSaver.SetToken(options.Token);
+				}
 
 				// Определяем территорию для импорта.
 
@@ -51,7 +64,7 @@ namespace ImportTemperatureMeteoInfo
 				}
 
 				// Считываем температуры с сайта
-				var temps = await importer.ReadTemperatures(options.SourceCity, territory.TimeZone.Offset, importStart, importEnd);
+				var temps = await importer.ReadTemperatures(options.SourceCity, territory.TimeZoneOffset, importStart, importEnd);
 
 				await SaveTemperatures(tempSaver, territory, options.MissingOnly, temps);
 			}
@@ -62,9 +75,12 @@ namespace ImportTemperatureMeteoInfo
 				Console.WriteLine($"{ Environment.NewLine }Нажмите любую клавишу для выхода...");
 				Console.ReadKey();
 			}
+			finally
+			{
+				tempSaver.Dispose();
+			}
 		}
 
-	
 		/// <summary>
 		/// Сохраняет температуры на сервер ЛЭРС УЧЁТ.
 		/// </summary>
@@ -75,13 +91,11 @@ namespace ImportTemperatureMeteoInfo
 		/// <param name="destinationTerritory"></param>
 		/// <param name="missingOnly">Импортировать только данные, которых ещё нет в справочнике.</param>
 		/// <param name="temps"></param>
-		private static async Task SaveTemperatures(LersTemperatureSaver tempSaver, Territory destinationTerritory, bool missingOnly, List<TemperatureRecord> temps)
+		private static Task SaveTemperatures(LersTemperatureSaver tempSaver, Lers.Models.Territory destinationTerritory, bool missingOnly, List<TemperatureRecord> temps)
 		{			
 			Console.WriteLine($"Среднесуточные температуры сохраняются на сервер'");
 			
-			await tempSaver.Save(temps, destinationTerritory, missingOnly);
-
-			tempSaver.Close();
+			return tempSaver.Save(temps, destinationTerritory, missingOnly);			
 		}					
 	}
 }

@@ -1,59 +1,68 @@
-﻿using System;
+﻿using Lers.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Lers.Core;
 
 namespace ImportTemperatureMeteoInfo
 {
-	class LersTemperatureSaver
+	public class TerritoryOutdoorTemperature
 	{
-		private Lers.LersServer server;
+		public DateTime Date { get; set; }
 
-		public LersTemperatureSaver()
+		public float Value { get; set; }
+	}
+
+	class LersTemperatureSaver: IDisposable
+	{
+		private readonly RestClient _client;
+
+
+
+		public LersTemperatureSaver(Uri baseUrl)
 		{
-			this.server = new Lers.LersServer("Meteo Info Import");
+			_client = new RestClient("Temperature import", null)
+			{
+				BaseAddress = baseUrl
+			};
 		}
 
-		public void Connect(string server, int port, string login, string password)
-		{
-			this.server.VersionMismatch += (sender, e) => e.Ignore = true;
+		public void Dispose() => _client.Dispose();
 
+		public Task Authenticate(string login, string password)
+		{
 			var authInfo = new Lers.Networking.BasicAuthenticationInfo(login, Lers.Networking.SecureStringHelper.ConvertToSecureString(password));
 
-			this.server.Connect(server, (ushort)port, authInfo);
+			return _client.Authenticate(authInfo, CancellationToken.None);
 		}
 
-		public async Task Save(List<TemperatureRecord> records, Territory territory, bool missingOnly)
-		{
+		public async Task Save(List<TemperatureRecord> records, Lers.Models.Territory territory, bool missingOnly)
+		{			
 			if (territory == null)
 				throw new ArgumentNullException(nameof(territory));
 
-			// Обнуляем таймауты на выполнение запросов, т.к. сервер может быть занят обработкой данных:
-			// "Ошибка чтения среднесуточных температур. Истекло время ожидания запроса "Просмотр справочника температур".
+			var route = ApiRouteBuilder.CreateDefault($"Data/Territories/{territory.Id}/Weather").ToString();
 
-			this.server.DefaultRequestTimeout = 0;			
-
-			IDictionary<DateTime, Lers.Data.OutdoorTemperatureRecord> existingTemperature = null;
+			IDictionary<DateTime, TerritoryOutdoorTemperature> existingTemperature = null;
 
 			if (missingOnly)
 			{
 				// Если импортируются только отсутствующие данные, получаем существующую температуру наружного воздуха.
 
-				existingTemperature = (await server.OutdoorTemperature.GetAsync())
-					.Where(x => x.Territory.Id == territory.Id)
+				existingTemperature = (await _client.GetAsync<TerritoryOutdoorTemperature[]>(route))					
 					.ToDictionary(x => x.Date);
 			}
 
-			var outdoorTemp = new List<Lers.Data.OutdoorTemperatureRecord>();
+			var outdoorTemp = new List<TerritoryOutdoorTemperature>();
 
 			foreach (var record in records)
 			{
 				if (!missingOnly || !existingTemperature.ContainsKey(record.Date))
 				{
-					var temp = new Lers.Data.OutdoorTemperatureRecord(record.Date, territory)
+					var temp = new TerritoryOutdoorTemperature
 					{
+						Date = record.Date,
 						Value = record.Temperature
 					};
 					outdoorTemp.Add(temp);
@@ -66,26 +75,26 @@ namespace ImportTemperatureMeteoInfo
 				return;
 			}
 
-			await server.OutdoorTemperature.SetAsync(outdoorTemp.ToArray());
+			await _client.PutAsync(route, outdoorTemp);
 		}
 
-		public async Task<Territory> GetTerritory(string territoryName)
+		internal void SetToken(string token) => _client.SetToken(token);
+
+		public async Task<Lers.Models.Territory> GetTerritory(string territoryName)
 		{
 			if (string.IsNullOrEmpty(territoryName))
 			{
-				return this.server.Territories.DefaultTerritory;
+				var route = ApiRouteBuilder.CreateDefault("Core/Territories/1");
+				return await _client.GetAsync<Lers.Models.Territory>(route.ToString());
 			}
 			else
 			{
-				var list = await server.Territories.GetListAsync();
+				var route = ApiRouteBuilder.CreateDefault("Core/Territories");
 
-				return list.Where(x => x.Name == territoryName).FirstOrDefault();
+				var list = await _client.GetAsync<Lers.Models.Territory[]>(route.ToString());
+
+				return list.FirstOrDefault(x => x.Name == territoryName);
 			}
-		}
-
-		internal void Close()
-		{
-			this.server.Disconnect(10000);
 		}
 	}
 }

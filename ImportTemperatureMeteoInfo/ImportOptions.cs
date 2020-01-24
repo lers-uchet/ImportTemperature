@@ -20,22 +20,22 @@ namespace ImportTemperatureMeteoInfo
 		public string Server { get; set; }
 
 		/// <summary>
-		/// Порт сервера ЛЭРС УЧЁТ, на который импортируется температура.
-		/// </summary>
-		[Option(longName: "serverPort", Required = false, Default = 10000 )]
-		public int ServerPort { get; set; }
-
-		/// <summary>
 		/// Логин на сервере.
 		/// </summary>
-		[Option(longName: "login", Required = true)]
+		[Option(longName: "login", Required = false)]
 		public string Login { get; set; }
 
 		/// <summary>
 		/// Пароль на сервере.
 		/// </summary>
-		[Option(longName: "password", Required = true)]
+		[Option(longName: "password", Required = false)]
 		public string Password { get; set; }
+
+		/// <summary>
+		/// Токен для авторизации на сервере.
+		/// </summary>
+		[Option(longName:"token", Required = false)]
+		public string Token { get; set; }
 
 		/// <summary>
 		/// Наименование территории, для которой сохраняется Тнв.

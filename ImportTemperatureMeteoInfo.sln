@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImportTemperatureMeteoInfo", "ImportTemperatureMeteoInfo\ImportTemperatureMeteoInfo.csproj", "{7EEE706D-5908-4258-8A96-DE2461D10825}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImportTemperatureMeteoInfo", "ImportTemperatureMeteoInfo\ImportTemperatureMeteoInfo.csproj", "{7EEE706D-5908-4258-8A96-DE2461D10825}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lers.System", "..\LersUchet\Framework\Lers.System\Lers.System.csproj", "{34FD2131-278F-4402-B29C-244C8A39ED2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,8 +38,29 @@ Global
 		{7EEE706D-5908-4258-8A96-DE2461D10825}.Release|x64.Build.0 = Release|Any CPU
 		{7EEE706D-5908-4258-8A96-DE2461D10825}.Release|x86.ActiveCfg = Release|Any CPU
 		{7EEE706D-5908-4258-8A96-DE2461D10825}.Release|x86.Build.0 = Release|Any CPU
+		{34FD2131-278F-4402-B29C-244C8A39ED2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34FD2131-278F-4402-B29C-244C8A39ED2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34FD2131-278F-4402-B29C-244C8A39ED2D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{34FD2131-278F-4402-B29C-244C8A39ED2D}.Debug|x64.Build.0 = Debug|Any CPU
+		{34FD2131-278F-4402-B29C-244C8A39ED2D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{34FD2131-278F-4402-B29C-244C8A39ED2D}.Debug|x86.Build.0 = Debug|Any CPU
+		{34FD2131-278F-4402-B29C-244C8A39ED2D}.Deploy|Any CPU.ActiveCfg = Deploy|Any CPU
+		{34FD2131-278F-4402-B29C-244C8A39ED2D}.Deploy|Any CPU.Build.0 = Deploy|Any CPU
+		{34FD2131-278F-4402-B29C-244C8A39ED2D}.Deploy|x64.ActiveCfg = Deploy|Any CPU
+		{34FD2131-278F-4402-B29C-244C8A39ED2D}.Deploy|x64.Build.0 = Deploy|Any CPU
+		{34FD2131-278F-4402-B29C-244C8A39ED2D}.Deploy|x86.ActiveCfg = Deploy|Any CPU
+		{34FD2131-278F-4402-B29C-244C8A39ED2D}.Deploy|x86.Build.0 = Deploy|Any CPU
+		{34FD2131-278F-4402-B29C-244C8A39ED2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34FD2131-278F-4402-B29C-244C8A39ED2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34FD2131-278F-4402-B29C-244C8A39ED2D}.Release|x64.ActiveCfg = Release|Any CPU
+		{34FD2131-278F-4402-B29C-244C8A39ED2D}.Release|x64.Build.0 = Release|Any CPU
+		{34FD2131-278F-4402-B29C-244C8A39ED2D}.Release|x86.ActiveCfg = Release|Any CPU
+		{34FD2131-278F-4402-B29C-244C8A39ED2D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {30E3D2FE-6DE9-4A51-9B55-A3B2EBA64BCB}
 	EndGlobalSection
 EndGlobal

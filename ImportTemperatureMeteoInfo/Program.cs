@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using CommandLine;
+﻿using CommandLine;
+using Lers.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace ImportTemperatureMeteoInfo
 {
@@ -66,12 +65,25 @@ namespace ImportTemperatureMeteoInfo
 				// Импорт данных осуществляется до сегодняшнего дня.
 				var importEnd = DateTime.Now.Date;
 
+				// Подключаемся к серверу
+				var tempSaver = new LersTemperatureSaver();
+				tempSaver.Connect(options.Server, (ushort)options.ServerPort, options.Login, options.Password);
+
+				// Определяем территорию для импорта.
+
+				var territory = await tempSaver.GetTerritory(options.DestinationTerritory);
+
+				if (territory == null)
+				{
+					throw new Exception($"Территория '{territory}' не найдена на сервере.");
+				}
+
 				// Считываем данные по температурам.
 				Console.WriteLine($"Чтение температур с {importStart} по {importEnd}");
 
-				var temps = await ReadCityTemperatures(cityId, options.TerritoryUtcOffset, timeStamps, importStart, importEnd);
+				var temps = await ReadCityTemperatures(cityId, territory.TimeZone.Offset, timeStamps, importStart, importEnd);
 
-				await SaveTemperatures(options.Server, (ushort)options.ServerPort, options.Login, options.Password, options.DestinationTerritory, options.MissingOnly, temps);
+				await SaveTemperatures(tempSaver, territory, options.MissingOnly, temps);
 			}
 			catch (Exception exc)
 			{
@@ -164,7 +176,7 @@ namespace ImportTemperatureMeteoInfo
 		/// <param name="destinationTerritory"></param>
 		/// <param name="missingOnly">Импортировать только данные, которых ещё нет в справочнике.</param>
 		/// <param name="temps"></param>
-		private static async Task SaveTemperatures(string server, ushort port, string login, string password, string destinationTerritory, bool missingOnly, List<TemperatureRecord> temps)
+		private static async Task SaveTemperatures(LersTemperatureSaver tempSaver, Territory destinationTerritory, bool missingOnly, List<TemperatureRecord> temps)
 		{
 			var tempGroups = from t in temps
 							 group t.Temperature
@@ -183,10 +195,8 @@ namespace ImportTemperatureMeteoInfo
 				averageTemperatures.Add(new TemperatureRecord { Date = tempGroup.Key, Temperature = avg });
 			}
 
-			Console.WriteLine($"Среднесуточные температуры сохраняются на сервер '{server}:{port}'");
-			var tempSaver = new LersTemperatureSaver();
-			tempSaver.Connect(server, port, login, password);
-
+			Console.WriteLine($"Среднесуточные температуры сохраняются на сервер'");
+			
 			await tempSaver.Save(averageTemperatures, destinationTerritory, missingOnly);
 
 			tempSaver.Close();

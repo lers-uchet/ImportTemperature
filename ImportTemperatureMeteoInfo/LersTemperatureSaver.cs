@@ -25,18 +25,15 @@ namespace ImportTemperatureMeteoInfo
 			this.server.Connect(server, (ushort)port, authInfo);
 		}
 
-		public async Task Save(List<TemperatureRecord> records, string territoryName, bool missingOnly)
+		public async Task Save(List<TemperatureRecord> records, Territory territory, bool missingOnly)
 		{
-			// Устанавливаем большое время ожидания. Это необходимо для того, что бы если в момент импорта сервер оказался занят
-			// не возникало исключений формата "истекло время ожидания".
-			server.DefaultRequestTimeout = 500;
-			
-			var territory = await GetTerritory(territoryName);
-
 			if (territory == null)
-			{
-				throw new Exception($"Территория '{territoryName}' не найдена на сервере.");
-			}
+				throw new ArgumentNullException(nameof(territory));
+
+			// Обнуляем таймауты на выполнение запросов, т.к. сервер может быть занят обработкой данных:
+			// "Ошибка чтения среднесуточных температур. Истекло время ожидания запроса "Просмотр справочника температур".
+
+			this.server.DefaultRequestTimeout = 0;			
 
 			IDictionary<DateTime, Lers.Data.OutdoorTemperatureRecord> existingTemperature = null;
 
@@ -47,7 +44,6 @@ namespace ImportTemperatureMeteoInfo
 				existingTemperature = (await server.OutdoorTemperature.GetAsync())
 					.Where(x => x.Territory.Id == territory.Id)
 					.ToDictionary(x => x.Date);
-					
 			}
 
 			var outdoorTemp = new List<Lers.Data.OutdoorTemperatureRecord>();
@@ -56,8 +52,10 @@ namespace ImportTemperatureMeteoInfo
 			{
 				if (!missingOnly || !existingTemperature.ContainsKey(record.Date))
 				{
-					var temp = new Lers.Data.OutdoorTemperatureRecord(record.Date, territory);
-					temp.Value = record.Temperature;
+					var temp = new Lers.Data.OutdoorTemperatureRecord(record.Date, territory)
+					{
+						Value = record.Temperature
+					};
 					outdoorTemp.Add(temp);
 				}
 			}
@@ -71,7 +69,7 @@ namespace ImportTemperatureMeteoInfo
 			await server.OutdoorTemperature.SetAsync(outdoorTemp.ToArray());
 		}
 
-		private async Task<Territory> GetTerritory(string territoryName)
+		public async Task<Territory> GetTerritory(string territoryName)
 		{
 			if (string.IsNullOrEmpty(territoryName))
 			{

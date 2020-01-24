@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace ImportTemperatureMeteoInfo
+namespace ImportTemperatureMeteoInfo.Importers
 {
 	/// <summary>
 	/// Проводит разбор структуры страниц сайта meteoinfo.ru

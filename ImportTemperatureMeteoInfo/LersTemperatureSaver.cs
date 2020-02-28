@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lers.Core;
 
@@ -26,10 +27,10 @@ namespace ImportTemperatureMeteoInfo
 
 		public async Task Save(List<TemperatureRecord> records, string territoryName, bool missingOnly)
 		{
-			// Обнуляем таймауты на выполнение запросов, т.к. сервер может быть занят обработкой данных:
-			// "Ошибка чтения среднесуточных температур. Истекло время ожидания запроса "Просмотр справочника температур".
-			this.server.DefaultRequestTimeout = 0;
-
+			// Устанавливаем большое время ожидания. Это необходимо для того, что бы если в момент импорта сервер оказался занят
+			// не возникало исключений формата "истекло время ожидания".
+			server.DefaultRequestTimeout = 500;
+			
 			var territory = await GetTerritory(territoryName);
 
 			if (territory == null)

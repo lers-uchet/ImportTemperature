@@ -43,9 +43,9 @@ namespace ImportTemperatureMeteoInfo
 			{
 				// Если импортируются только отсутствующие данные, получаем существующую температуру наружного воздуха.
 
-				existingTemperature = await Task.Run(() => this.server.OutdoorTemperature.Get()
+				existingTemperature = (await server.OutdoorTemperature.GetAsync())
 					.Where(x => x.Territory.Id == territory.Id)
-					.ToDictionary(x => x.Date));
+					.ToDictionary(x => x.Date);
 					
 			}
 
@@ -67,7 +67,7 @@ namespace ImportTemperatureMeteoInfo
 				return;
 			}
 
-			await Task.Run(() => this.server.OutdoorTemperature.Set(outdoorTemp.ToArray()));
+			await server.OutdoorTemperature.SetAsync(outdoorTemp.ToArray());
 		}
 
 		private async Task<Territory> GetTerritory(string territoryName)

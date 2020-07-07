@@ -26,7 +26,11 @@
 
 --missingOnly: добавьте этот флаг для того чтобы импортировать только ту температуру, которой ещё нет в справочнике. Если параметр не задан, то все существующие в справочнике температуры за заданный интервал будут перезаписаны.
 
+--source: сайт, с которого будут импортированы температуры. Может принимать значения:
+- MeteoInfo (по умолчанию): сайт https://meteoinfo.ru
+- PogodaIKlimat: сайт http://pogodaiklimat.ru/
+
 
 Пример вызова:
 
-ImportTemperatureMeteoInfo.exe --incity Хабаровск --mscoffset 7 --server "server" --login "login" --password "password"
+ImportTemperatureMeteoInfo.exe --incity Хабаровск --server "server" --login "login" --password "password"

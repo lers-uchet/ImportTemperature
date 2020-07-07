@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImportTemperatureMeteoInfo", "ImportTemperatureMeteoInfo\ImportTemperatureMeteoInfo.csproj", "{7EEE706D-5908-4258-8A96-DE2461D10825}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImportTemperatureMeteoInfo", "ImportTemperatureMeteoInfo\ImportTemperatureMeteoInfo.csproj", "{7EEE706D-5908-4258-8A96-DE2461D10825}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,5 +39,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {30E3D2FE-6DE9-4A51-9B55-A3B2EBA64BCB}
 	EndGlobalSection
 EndGlobal

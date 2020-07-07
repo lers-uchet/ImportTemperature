@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ImportTemperatureMeteoInfo": {
+      "commandName": "Project",
+      "commandLineArgs": "--incity Хабаровск --server http://localhost:52971 --missingOnly --login admin --password admin --source PogodaIKlimat"
+    }
+  }
+}

@@ -1,37 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace ImportTemperatureMeteoInfo
+namespace ImportTemperatureMeteoInfo.Importers
 {
 	/// <summary>
 	/// Проводит разбор структуры страниц сайта meteoinfo.ru
 	/// </summary>
 	internal static class MeteoInfoParser
 	{
-		public static Dictionary<string, string> ParseOptions(string homePageString, string selectName)
-		{
-			var result = new Dictionary<string, string>();
-
-			string[] homePageContent = Regex.Split(homePageString, Environment.NewLine);
-
-			foreach (var str in homePageContent)
-			{
-				if (ContainsSelector(selectName, str))
-				{
-					var option = GetOptions(str);
-
-					if (option != null)
-					{
-						result = option.ToDictionary(x => x.Name, y => y.UrlPart);
-					}
-				}
-			}
-
-			return result;
-		}
-
 		public static float? ExtractTemperature(string hourContent)
 		{
 			// Сейчас сайт возвращает информацию по температурам в видела html кода таблицы, среди неё нам необходим найти данную строку и выделить
@@ -76,11 +53,6 @@ namespace ImportTemperatureMeteoInfo
 		private static bool ContainsSelector(string selectorName, string str)
 		{
 			return str.Contains($"<select name=\"{selectorName}\"");
-		}
-
-		private static bool ContainsSelectorEnd(string str)
-		{
-			return str.Contains("</select>");
 		}
 
 		public static Dictionary<DateTime, string> ParseTimeStamps(string raw)

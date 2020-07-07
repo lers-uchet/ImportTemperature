@@ -1,93 +1,118 @@
-﻿using System;
+﻿using Lers.Api;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Lers.Core;
 
 namespace ImportTemperatureMeteoInfo
 {
-	class LersTemperatureSaver
+	/// <summary>
+	/// Сохраняет считанные температуры на сервер ЛЭРС УЧЁТ.
+	/// </summary>
+	class LersTemperatureSaver: IDisposable
 	{
-		private Lers.LersServer server;
+		private readonly Uri _baseUri;
 
-		public LersTemperatureSaver()
+		private readonly HttpClient _httpClient;
+
+		public LersTemperatureSaver(Uri baseUri)
 		{
-			this.server = new Lers.LersServer("Meteo Info Import");
-		}
+			_baseUri = baseUri;
 
-		public void Connect(string server, int port, string login, string password)
-		{
-			this.server.VersionMismatch += (sender, e) => e.Ignore = true;
-
-			var authInfo = new Lers.Networking.BasicAuthenticationInfo(login, Lers.Networking.SecureStringHelper.ConvertToSecureString(password));
-
-			this.server.Connect(server, (ushort)port, authInfo);
-		}
-
-		public async Task Save(List<TemperatureRecord> records, string territoryName, bool missingOnly)
-		{
-			// Устанавливаем большое время ожидания. Это необходимо для того, что бы если в момент импорта сервер оказался занят
-			// не возникало исключений формата "истекло время ожидания".
-			server.DefaultRequestTimeout = 500;
-			
-			var territory = await GetTerritory(territoryName);
-
-			if (territory == null)
+			_httpClient = new HttpClient
 			{
-				throw new Exception($"Территория '{territoryName}' не найдена на сервере.");
-			}
+				BaseAddress = baseUri
+			};
+		}
 
-			IDictionary<DateTime, Lers.Data.OutdoorTemperatureRecord> existingTemperature = null;
+		public void Dispose() => _httpClient.Dispose();
+		
+		public async Task Authenticate(string login, string password)
+		{
+			var authController = new LoginClient(_baseUri.ToString(), _httpClient);
+
+			LoginResponseParameters response = await authController.LoginPlainAsync(new AuthenticatePlainRequestParameters
+			{
+				Application = "Утилита импорта температур",
+				Login = login,
+				Password = password
+			});
+
+			SetToken(response.Token);
+		}
+
+
+		/// <summary>
+		/// Сохраняет температуры наружного воздуха в указанную территорию.
+		/// </summary>
+		/// <param name="records"></param>
+		/// <param name="territory"></param>
+		/// <param name="missingOnly"></param>
+		/// <returns></returns>
+		public async Task Save(List<TemperatureRecord> records, Territory territory, bool missingOnly)
+		{			
+			if (territory == null)
+				throw new ArgumentNullException(nameof(territory));
+
+			var weatherClient = new WeatherClient(_baseUri.ToString(), _httpClient);
+
+			IDictionary<DateTimeOffset, TerritoryOutdoorTemperature> existingTemperature = null;
 
 			if (missingOnly)
 			{
 				// Если импортируются только отсутствующие данные, получаем существующую температуру наружного воздуха.
 
-				existingTemperature = (await server.OutdoorTemperature.GetAsync())
-					.Where(x => x.Territory.Id == territory.Id)
+				existingTemperature = (await weatherClient.GetAsync(territory.Id))
 					.ToDictionary(x => x.Date);
-					
 			}
 
-			var outdoorTemp = new List<Lers.Data.OutdoorTemperatureRecord>();
+			var outdoorTemp = new List<TerritoryOutdoorTemperature>();
 
 			foreach (var record in records)
 			{
 				if (!missingOnly || !existingTemperature.ContainsKey(record.Date))
 				{
-					var temp = new Lers.Data.OutdoorTemperatureRecord(record.Date, territory);
-					temp.Value = record.Temperature;
-					outdoorTemp.Add(temp);
+					outdoorTemp.Add(new TerritoryOutdoorTemperature
+					{
+						Date = record.Date,
+						Value = record.Temperature
+					});
 				}
 			}
 
 			if (outdoorTemp.Count <= 0)
 			{
 				Console.WriteLine("Нет данных для сохранения.");
-				return;
-			}
-
-			await server.OutdoorTemperature.SetAsync(outdoorTemp.ToArray());
-		}
-
-		private async Task<Territory> GetTerritory(string territoryName)
-		{
-			if (string.IsNullOrEmpty(territoryName))
-			{
-				return this.server.Territories.DefaultTerritory;
 			}
 			else
 			{
-				var list = await server.Territories.GetListAsync();
-
-				return list.Where(x => x.Name == territoryName).FirstOrDefault();
+				await weatherClient.SetAsync(territory.Id, outdoorTemp);
 			}
 		}
 
-		internal void Close()
+		internal void SetToken(string token)
+		{ 
+			_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+		}
+
+		public async Task<Territory> GetTerritory(string territoryName)
 		{
-			this.server.Disconnect(10000);
+			var territoryClient = new TerritoriesClient(_baseUri.ToString(), _httpClient);
+
+			if (string.IsNullOrEmpty(territoryName))
+			{				
+				// Если территория не задана, возвращаем территорию по умолчанию (с идентификатором 1).
+
+				return await territoryClient.GetByIdAsync(1);
+			}
+			else
+			{
+				ICollection<Territory> list = await territoryClient.GetListAsync();
+
+				return list.FirstOrDefault(x => x.Name == territoryName);
+			}
 		}
 	}
 }

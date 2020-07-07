@@ -1,6 +1,5 @@
 ﻿using CommandLine;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ImportTemperatureMeteoInfo
@@ -16,9 +15,10 @@ namespace ImportTemperatureMeteoInfo
 				});
 		}
 
+
 		private static async Task Entry(ImportOptions options)
 		{			
-			var tempSaver = new LersTemperatureSaver(new Uri(options.Server));
+			using var tempSaver = new LersTemperatureSaver(new Uri(options.Server));
 
 			try
 			{
@@ -27,7 +27,7 @@ namespace ImportTemperatureMeteoInfo
 					throw new Exception("Необходимо задать токен или логин/пароль.");
 				}
 
-				using var importer = new Importers.PogodaIKlimatReader();
+				using var importer = CreateReader(options.Source);
 
 				// По умолчанию импортируем данные только за предыдущий день.
 				// Этот параметр может быть переопределён из командной строки.
@@ -63,10 +63,15 @@ namespace ImportTemperatureMeteoInfo
 					throw new Exception($"Территория '{territory}' не найдена на сервере.");
 				}
 
-				// Считываем температуры с сайта
+				Console.WriteLine("Чтение среднесуточных температур с сайта.");
+
+				// Считываем температуры с сайта.
+
 				var temps = await importer.ReadTemperatures(options.SourceCity, territory.TimeZoneOffset, importStart, importEnd);
 
-				await SaveTemperatures(tempSaver, territory, options.MissingOnly, temps);
+				Console.WriteLine($"Среднесуточные температуры сохраняются на сервер'");
+
+				await tempSaver.Save(temps, territory, options.MissingOnly);
 			}
 			catch (Exception exc)
 			{
@@ -75,27 +80,22 @@ namespace ImportTemperatureMeteoInfo
 				Console.WriteLine($"{ Environment.NewLine }Нажмите любую клавишу для выхода...");
 				Console.ReadKey();
 			}
-			finally
-			{
-				tempSaver.Dispose();
-			}
 		}
 
+
 		/// <summary>
-		/// Сохраняет температуры на сервер ЛЭРС УЧЁТ.
+		/// Создаёт объект для чтения температур с указанного источника.
 		/// </summary>
-		/// <param name="server"></param>
-		/// <param name="port"></param>
-		/// <param name="login"></param>
-		/// <param name="password"></param>
-		/// <param name="destinationTerritory"></param>
-		/// <param name="missingOnly">Импортировать только данные, которых ещё нет в справочнике.</param>
-		/// <param name="temps"></param>
-		private static Task SaveTemperatures(LersTemperatureSaver tempSaver, Lers.Models.Territory destinationTerritory, bool missingOnly, List<TemperatureRecord> temps)
-		{			
-			Console.WriteLine($"Среднесуточные температуры сохраняются на сервер'");
-			
-			return tempSaver.Save(temps, destinationTerritory, missingOnly);			
-		}					
+		/// <param name="source"></param>
+		/// <returns></returns>
+		private static ITempertatureReader CreateReader(ImportSource source)
+		{
+			return source switch
+			{
+				ImportSource.MeteoInfo => new Importers.MemeoInfoReader(),
+				ImportSource.PogodaIKlimat => new Importers.PogodaIKlimatReader(),
+				_ => throw new ArgumentOutOfRangeException(nameof(source))
+			};
+		}
 	}
 }

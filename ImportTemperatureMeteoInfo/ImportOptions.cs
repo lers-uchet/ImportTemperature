@@ -63,5 +63,14 @@ namespace ImportTemperatureMeteoInfo
 		[Option(longName: "missingOnly", Default = false, Required = false,
 				HelpText = "Импортировать только температуры, которых ещё нет в справочнике. Существующие температуры не перезаписываются.")]
 		public bool MissingOnly { get; set; }
+
+		/// <summary>
+		/// Сайт, с которого производится импорт температур.
+		/// </summary>
+		[Option(longName: "source", 
+				Default = ImportSource.MeteoInfo, 
+				Required = false, 
+				HelpText = "Сайт, с которого производится импорт температур.")]
+		public ImportSource Source { get; set; }
 	}
 }

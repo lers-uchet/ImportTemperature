@@ -1,56 +1,70 @@
-﻿using Lers.Http;
+﻿using Lers.Api;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace ImportTemperatureMeteoInfo
 {
-	public class TerritoryOutdoorTemperature
-	{
-		public DateTime Date { get; set; }
-
-		public float Value { get; set; }
-	}
-
+	/// <summary>
+	/// Сохраняет считанные температуры на сервер ЛЭРС УЧЁТ.
+	/// </summary>
 	class LersTemperatureSaver: IDisposable
 	{
-		private readonly RestClient _client;
+		private readonly Uri _baseUri;
 
+		private readonly HttpClient _httpClient;
 
-
-		public LersTemperatureSaver(Uri baseUrl)
+		public LersTemperatureSaver(Uri baseUri)
 		{
-			_client = new RestClient("Temperature import", null)
+			_baseUri = baseUri;
+
+			_httpClient = new HttpClient
 			{
-				BaseAddress = baseUrl
+				BaseAddress = baseUri
 			};
 		}
 
-		public void Dispose() => _client.Dispose();
-
-		public Task Authenticate(string login, string password)
+		public void Dispose() => _httpClient.Dispose();
+		
+		public async Task Authenticate(string login, string password)
 		{
-			var authInfo = new Lers.Networking.BasicAuthenticationInfo(login, Lers.Networking.SecureStringHelper.ConvertToSecureString(password));
+			var authController = new LoginClient(_baseUri.ToString(), _httpClient);
 
-			return _client.Authenticate(authInfo, CancellationToken.None);
+			LoginResponseParameters response = await authController.LoginPlainAsync(new AuthenticatePlainRequestParameters
+			{
+				Application = "Утилита импорта температур",
+				Login = login,
+				Password = password
+			});
+
+			SetToken(response.Token);
 		}
 
-		public async Task Save(List<TemperatureRecord> records, Lers.Models.Territory territory, bool missingOnly)
+
+		/// <summary>
+		/// Сохраняет температуры наружного воздуха в указанную территорию.
+		/// </summary>
+		/// <param name="records"></param>
+		/// <param name="territory"></param>
+		/// <param name="missingOnly"></param>
+		/// <returns></returns>
+		public async Task Save(List<TemperatureRecord> records, Territory territory, bool missingOnly)
 		{			
 			if (territory == null)
 				throw new ArgumentNullException(nameof(territory));
 
-			var route = ApiRouteBuilder.CreateDefault($"Data/Territories/{territory.Id}/Weather").ToString();
+			var weatherClient = new WeatherClient(_baseUri.ToString(), _httpClient);
 
-			IDictionary<DateTime, TerritoryOutdoorTemperature> existingTemperature = null;
+			IDictionary<DateTimeOffset, TerritoryOutdoorTemperature> existingTemperature = null;
 
 			if (missingOnly)
 			{
 				// Если импортируются только отсутствующие данные, получаем существующую температуру наружного воздуха.
 
-				existingTemperature = (await _client.GetAsync<TerritoryOutdoorTemperature[]>(route))					
+				existingTemperature = (await weatherClient.GetAsync(territory.Id))
 					.ToDictionary(x => x.Date);
 			}
 
@@ -60,38 +74,42 @@ namespace ImportTemperatureMeteoInfo
 			{
 				if (!missingOnly || !existingTemperature.ContainsKey(record.Date))
 				{
-					var temp = new TerritoryOutdoorTemperature
+					outdoorTemp.Add(new TerritoryOutdoorTemperature
 					{
 						Date = record.Date,
 						Value = record.Temperature
-					};
-					outdoorTemp.Add(temp);
+					});
 				}
 			}
 
 			if (outdoorTemp.Count <= 0)
 			{
 				Console.WriteLine("Нет данных для сохранения.");
-				return;
-			}
-
-			await _client.PutAsync(route, outdoorTemp);
-		}
-
-		internal void SetToken(string token) => _client.SetToken(token);
-
-		public async Task<Lers.Models.Territory> GetTerritory(string territoryName)
-		{
-			if (string.IsNullOrEmpty(territoryName))
-			{
-				var route = ApiRouteBuilder.CreateDefault("Core/Territories/1");
-				return await _client.GetAsync<Lers.Models.Territory>(route.ToString());
 			}
 			else
 			{
-				var route = ApiRouteBuilder.CreateDefault("Core/Territories");
+				await weatherClient.SetAsync(territory.Id, outdoorTemp);
+			}
+		}
 
-				var list = await _client.GetAsync<Lers.Models.Territory[]>(route.ToString());
+		internal void SetToken(string token)
+		{ 
+			_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+		}
+
+		public async Task<Territory> GetTerritory(string territoryName)
+		{
+			var territoryClient = new TerritoriesClient(_baseUri.ToString(), _httpClient);
+
+			if (string.IsNullOrEmpty(territoryName))
+			{				
+				// Если территория не задана, возвращаем территорию по умолчанию (с идентификатором 1).
+
+				return await territoryClient.GetByIdAsync(1);
+			}
+			else
+			{
+				ICollection<Territory> list = await territoryClient.GetListAsync();
 
 				return list.FirstOrDefault(x => x.Name == territoryName);
 			}

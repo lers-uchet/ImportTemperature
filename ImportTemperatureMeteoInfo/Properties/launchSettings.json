@@ -2,7 +2,7 @@
   "profiles": {
     "ImportTemperatureMeteoInfo": {
       "commandName": "Project",
-      "commandLineArgs": "--incity Хабаровск --server http://localhost:52971 --missingOnly --token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJBY2NvdW50SWQiOiIxIiwiVG9rZW5WZXJzaW9uIjoiMyIsIkFwcGxpY2F0aW9uIjoiVGVtcGVyYXR1cmUgaW1wb3J0IiwibmJmIjoxNTc5ODMyNzM5LCJleHAiOjE2MTE5NzM1MzksImlzcyI6IkxFUlMgQU1SIFNlcnZlciIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTI5NzEifQ._FpltfKRxvcBqoIXC5cnvSLAbSrAajtQe-nBSl9hPEw"
+      "commandLineArgs": "--incity Хабаровск --server http://localhost:52971 --missingOnly --login admin --password admin --source PogodaIKlimat"
     }
   }
 }

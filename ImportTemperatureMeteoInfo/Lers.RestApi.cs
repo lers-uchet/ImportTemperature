@@ -333,6 +333,396 @@ namespace Lers.Api
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.6.2.0 (NJsonSchema v10.1.23.0 (Newtonsoft.Json v12.0.0.0))")]
+    public partial class IncidentsClient 
+    {
+        private string _baseUrl = "";
+        private System.Net.Http.HttpClient _httpClient;
+        private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
+    
+        public IncidentsClient(string baseUrl, System.Net.Http.HttpClient httpClient)
+        {
+            BaseUrl = baseUrl; 
+            _httpClient = httpClient; 
+            _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(CreateSerializerSettings);
+        }
+    
+        private Newtonsoft.Json.JsonSerializerSettings CreateSerializerSettings()
+        {
+            var settings = new Newtonsoft.Json.JsonSerializerSettings();
+            UpdateJsonSerializerSettings(settings);
+            return settings;
+        }
+    
+        public string BaseUrl 
+        {
+            get { return _baseUrl; }
+            set { _baseUrl = value; }
+        }
+    
+        protected Newtonsoft.Json.JsonSerializerSettings JsonSerializerSettings { get { return _settings.Value; } }
+    
+        partial void UpdateJsonSerializerSettings(Newtonsoft.Json.JsonSerializerSettings settings);
+        partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, string url);
+        partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
+        partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
+    
+        /// <summary>Возвращает активные (открытые) НС для точки учёта.</summary>
+        /// <param name="measurePointId">Идентификатор точки учёта, для которой запрашиваются НС.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="LersException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Incident>> GetActiveByMeasurePointAsync(int measurePointId)
+        {
+            return GetActiveByMeasurePointAsync(measurePointId, System.Threading.CancellationToken.None);
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Возвращает активные (открытые) НС для точки учёта.</summary>
+        /// <param name="measurePointId">Идентификатор точки учёта, для которой запрашиваются НС.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="LersException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Incident>> GetActiveByMeasurePointAsync(int measurePointId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (measurePointId == null)
+                throw new System.ArgumentNullException("measurePointId");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/v1/Incidents/Active/MeasurePoint/{measurePointId}");
+            urlBuilder_.Replace("{measurePointId}", System.Uri.EscapeDataString(ConvertToString(measurePointId, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "200") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<Incident>>(response_, headers_).ConfigureAwait(false);
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new LersException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new LersException("Forbidden", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new LersException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+            
+                        return default(System.Collections.Generic.ICollection<Incident>);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Возвращает параметры НС и её журнал по уникальному идентификатору.</summary>
+        /// <param name="id">Идентификатор НС, для которой нужно вернуть параметры и журнал.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="LersException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<IncidentGetResponseParameters> GetByIdAsync(int id)
+        {
+            return GetByIdAsync(id, System.Threading.CancellationToken.None);
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Возвращает параметры НС и её журнал по уникальному идентификатору.</summary>
+        /// <param name="id">Идентификатор НС, для которой нужно вернуть параметры и журнал.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="LersException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<IncidentGetResponseParameters> GetByIdAsync(int id, System.Threading.CancellationToken cancellationToken)
+        {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/v1/Incidents/{id}");
+            urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "200") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<IncidentGetResponseParameters>(response_, headers_).ConfigureAwait(false);
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new LersException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new LersException("Forbidden", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new LersException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+            
+                        return default(IncidentGetResponseParameters);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Создаёт нештатную ситуацию.</summary>
+        /// <param name="body">Параметры запроса.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="LersException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<BaseSaveResponseParameters> CreateIncidentAsync(CreateIncidentRequestParameters body)
+        {
+            return CreateIncidentAsync(body, System.Threading.CancellationToken.None);
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Создаёт нештатную ситуацию.</summary>
+        /// <param name="body">Параметры запроса.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="LersException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<BaseSaveResponseParameters> CreateIncidentAsync(CreateIncidentRequestParameters body, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/v1/Incidents");
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json-patch+json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "201") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<BaseSaveResponseParameters>(response_, headers_).ConfigureAwait(false);
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new LersException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new LersException("Forbidden", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new LersException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+            
+                        return default(BaseSaveResponseParameters);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        protected struct ObjectResponseResult<T>
+        {
+            public ObjectResponseResult(T responseObject, string responseText)
+            {
+                this.Object = responseObject;
+                this.Text = responseText;
+            }
+    
+            public T Object { get; }
+    
+            public string Text { get; }
+        }
+    
+        public bool ReadResponseAsString { get; set; }
+        
+        protected virtual async System.Threading.Tasks.Task<ObjectResponseResult<T>> ReadObjectResponseAsync<T>(System.Net.Http.HttpResponseMessage response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers)
+        {
+            if (response == null || response.Content == null)
+            {
+                return new ObjectResponseResult<T>(default(T), string.Empty);
+            }
+        
+            if (ReadResponseAsString)
+            {
+                var responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                try
+                {
+                    var typedBody = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(responseText, JsonSerializerSettings);
+                    return new ObjectResponseResult<T>(typedBody, responseText);
+                }
+                catch (Newtonsoft.Json.JsonException exception)
+                {
+                    var message = "Could not deserialize the response body string as " + typeof(T).FullName + ".";
+                    throw new LersException(message, (int)response.StatusCode, responseText, headers, exception);
+                }
+            }
+            else
+            {
+                try
+                {
+                    using (var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                    using (var streamReader = new System.IO.StreamReader(responseStream))
+                    using (var jsonTextReader = new Newtonsoft.Json.JsonTextReader(streamReader))
+                    {
+                        var serializer = Newtonsoft.Json.JsonSerializer.Create(JsonSerializerSettings);
+                        var typedBody = serializer.Deserialize<T>(jsonTextReader);
+                        return new ObjectResponseResult<T>(typedBody, string.Empty);
+                    }
+                }
+                catch (Newtonsoft.Json.JsonException exception)
+                {
+                    var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
+                    throw new LersException(message, (int)response.StatusCode, string.Empty, headers, exception);
+                }
+            }
+        }
+    
+        private string ConvertToString(object value, System.Globalization.CultureInfo cultureInfo)
+        {
+            if (value is System.Enum)
+            {
+                var name = System.Enum.GetName(value.GetType(), value);
+                if (name != null)
+                {
+                    var field = System.Reflection.IntrospectionExtensions.GetTypeInfo(value.GetType()).GetDeclaredField(name);
+                    if (field != null)
+                    {
+                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute)) 
+                            as System.Runtime.Serialization.EnumMemberAttribute;
+                        if (attribute != null)
+                        {
+                            return attribute.Value != null ? attribute.Value : name;
+                        }
+                    }
+        
+                    return System.Convert.ToString(System.Convert.ChangeType(value, System.Enum.GetUnderlyingType(value.GetType()), cultureInfo));
+                }
+            }
+            else if (value is bool) 
+            {
+                return System.Convert.ToString(value, cultureInfo)?.ToLowerInvariant();
+            }
+            else if (value is byte[])
+            {
+                return System.Convert.ToBase64String((byte[]) value);
+            }
+            else if (value != null && value.GetType().IsArray)
+            {
+                var array = System.Linq.Enumerable.OfType<object>((System.Array) value);
+                return string.Join(",", System.Linq.Enumerable.Select(array, o => ConvertToString(o, cultureInfo)));
+            }
+        
+            return System.Convert.ToString(value, cultureInfo);
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.6.2.0 (NJsonSchema v10.1.23.0 (Newtonsoft.Json v12.0.0.0))")]
     public partial class LoginClient 
     {
         private string _baseUrl = "";
@@ -525,16 +915,16 @@ namespace Lers.Api
         /// <summary>Возвращает информацию о текущем пользователе.</summary>
         /// <returns>Success</returns>
         /// <exception cref="LersException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<CurrentLoginInfo> GetCurrentLoginAsync()
+        public System.Threading.Tasks.Task<CurrentLoginInfo> GetCurrentLoginV1Async()
         {
-            return GetCurrentLoginAsync(System.Threading.CancellationToken.None);
+            return GetCurrentLoginV1Async(System.Threading.CancellationToken.None);
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Возвращает информацию о текущем пользователе.</summary>
         /// <returns>Success</returns>
         /// <exception cref="LersException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<CurrentLoginInfo> GetCurrentLoginAsync(System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<CurrentLoginInfo> GetCurrentLoginV1Async(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/v1/Login/Current");
@@ -744,7 +1134,7 @@ namespace Lers.Api
         /// <param name="units">Типы единиц измерения в которых необходимо вернуть данные по точке учёта.</param>
         /// <returns>Success</returns>
         /// <exception cref="LersException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<GetMeasurePointConsumptionResponse> GetConsumptionAsync(int id, System.DateTimeOffset start, System.DateTimeOffset end, DeviceDataType? dataTypes, ElectricDataKind? electricDataKind, bool? includeCalculated, bool? includeAbsentRecords, MeasurePointDataUnitsRequestType? units)
+        public System.Threading.Tasks.Task<GetMeasurePointConsumptionResponse> GetConsumptionAsync(int id, System.DateTimeOffset start, System.DateTimeOffset end, System.Collections.Generic.IEnumerable<DeviceDataType> dataTypes, ElectricDataKind? electricDataKind, bool? includeCalculated, bool? includeAbsentRecords, MeasurePointDataUnitsRequestType? units)
         {
             return GetConsumptionAsync(id, start, end, dataTypes, electricDataKind, includeCalculated, includeAbsentRecords, units, System.Threading.CancellationToken.None);
         }
@@ -761,7 +1151,7 @@ namespace Lers.Api
         /// <param name="units">Типы единиц измерения в которых необходимо вернуть данные по точке учёта.</param>
         /// <returns>Success</returns>
         /// <exception cref="LersException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<GetMeasurePointConsumptionResponse> GetConsumptionAsync(int id, System.DateTimeOffset start, System.DateTimeOffset end, DeviceDataType? dataTypes, ElectricDataKind? electricDataKind, bool? includeCalculated, bool? includeAbsentRecords, MeasurePointDataUnitsRequestType? units, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<GetMeasurePointConsumptionResponse> GetConsumptionAsync(int id, System.DateTimeOffset start, System.DateTimeOffset end, System.Collections.Generic.IEnumerable<DeviceDataType> dataTypes, ElectricDataKind? electricDataKind, bool? includeCalculated, bool? includeAbsentRecords, MeasurePointDataUnitsRequestType? units, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -779,23 +1169,23 @@ namespace Lers.Api
             urlBuilder_.Replace("{end}", System.Uri.EscapeDataString(end.ToString("s", System.Globalization.CultureInfo.InvariantCulture)));
             if (dataTypes != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("DataTypes") + "=").Append(System.Uri.EscapeDataString(ConvertToString(dataTypes, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                foreach (var item_ in dataTypes) { urlBuilder_.Append(System.Uri.EscapeDataString("dataTypes") + "=").Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append("&"); }
             }
             if (electricDataKind != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("ElectricDataKind") + "=").Append(System.Uri.EscapeDataString(ConvertToString(electricDataKind, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("electricDataKind") + "=").Append(System.Uri.EscapeDataString(ConvertToString(electricDataKind, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             if (includeCalculated != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("IncludeCalculated") + "=").Append(System.Uri.EscapeDataString(ConvertToString(includeCalculated, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("includeCalculated") + "=").Append(System.Uri.EscapeDataString(ConvertToString(includeCalculated, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             if (includeAbsentRecords != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("IncludeAbsentRecords") + "=").Append(System.Uri.EscapeDataString(ConvertToString(includeAbsentRecords, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("includeAbsentRecords") + "=").Append(System.Uri.EscapeDataString(ConvertToString(includeAbsentRecords, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             if (units != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("Units") + "=").Append(System.Uri.EscapeDataString(ConvertToString(units, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("units") + "=").Append(System.Uri.EscapeDataString(ConvertToString(units, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             urlBuilder_.Length--;
     
@@ -893,11 +1283,11 @@ namespace Lers.Api
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
             if (overwriteExisting != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("OverwriteExisting") + "=").Append(System.Uri.EscapeDataString(ConvertToString(overwriteExisting, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("overwriteExisting") + "=").Append(System.Uri.EscapeDataString(ConvertToString(overwriteExisting, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             if (electricDataKind != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("ElectricDataKind") + "=").Append(System.Uri.EscapeDataString(ConvertToString(electricDataKind, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("electricDataKind") + "=").Append(System.Uri.EscapeDataString(ConvertToString(electricDataKind, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             urlBuilder_.Length--;
     
@@ -1061,6 +1451,475 @@ namespace Lers.Api
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.6.2.0 (NJsonSchema v10.1.23.0 (Newtonsoft.Json v12.0.0.0))")]
+    public partial class MeasurePointDataClient 
+    {
+        private string _baseUrl = "";
+        private System.Net.Http.HttpClient _httpClient;
+        private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
+    
+        public MeasurePointDataClient(string baseUrl, System.Net.Http.HttpClient httpClient)
+        {
+            BaseUrl = baseUrl; 
+            _httpClient = httpClient; 
+            _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(CreateSerializerSettings);
+        }
+    
+        private Newtonsoft.Json.JsonSerializerSettings CreateSerializerSettings()
+        {
+            var settings = new Newtonsoft.Json.JsonSerializerSettings();
+            UpdateJsonSerializerSettings(settings);
+            return settings;
+        }
+    
+        public string BaseUrl 
+        {
+            get { return _baseUrl; }
+            set { _baseUrl = value; }
+        }
+    
+        protected Newtonsoft.Json.JsonSerializerSettings JsonSerializerSettings { get { return _settings.Value; } }
+    
+        partial void UpdateJsonSerializerSettings(Newtonsoft.Json.JsonSerializerSettings settings);
+        partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, string url);
+        partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
+        partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
+    
+        /// <summary>Сохраняет данные по точке учёта (потребление и интеграторы).
+        /// После сохранения запускается пересчёт данных и диагностика.</summary>
+        /// <param name="id">Идентификатор точки учёта.</param>
+        /// <param name="overwriteExisting">Указывает на то, что необходимо перезаписать существующие данные.</param>
+        /// <param name="electricDataKind">Вид значений по электроэнергии (исходные/реальные).</param>
+        /// <param name="body">Параметры сохранения.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="LersException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task SaveDataAsync(int id, bool? overwriteExisting, ElectricDataKind? electricDataKind, SaveDataRequestParams body)
+        {
+            return SaveDataAsync(id, overwriteExisting, electricDataKind, body, System.Threading.CancellationToken.None);
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Сохраняет данные по точке учёта (потребление и интеграторы).
+        /// После сохранения запускается пересчёт данных и диагностика.</summary>
+        /// <param name="id">Идентификатор точки учёта.</param>
+        /// <param name="overwriteExisting">Указывает на то, что необходимо перезаписать существующие данные.</param>
+        /// <param name="electricDataKind">Вид значений по электроэнергии (исходные/реальные).</param>
+        /// <param name="body">Параметры сохранения.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="LersException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task SaveDataAsync(int id, bool? overwriteExisting, ElectricDataKind? electricDataKind, SaveDataRequestParams body, System.Threading.CancellationToken cancellationToken)
+        {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/v1/Data/MeasurePoints/{id}?");
+            urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+            if (overwriteExisting != null) 
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("overwriteExisting") + "=").Append(System.Uri.EscapeDataString(ConvertToString(overwriteExisting, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (electricDataKind != null) 
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("electricDataKind") + "=").Append(System.Uri.EscapeDataString(ConvertToString(electricDataKind, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            urlBuilder_.Length--;
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json-patch+json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "200") 
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new LersException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new LersException("Forbidden", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new LersException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        protected struct ObjectResponseResult<T>
+        {
+            public ObjectResponseResult(T responseObject, string responseText)
+            {
+                this.Object = responseObject;
+                this.Text = responseText;
+            }
+    
+            public T Object { get; }
+    
+            public string Text { get; }
+        }
+    
+        public bool ReadResponseAsString { get; set; }
+        
+        protected virtual async System.Threading.Tasks.Task<ObjectResponseResult<T>> ReadObjectResponseAsync<T>(System.Net.Http.HttpResponseMessage response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers)
+        {
+            if (response == null || response.Content == null)
+            {
+                return new ObjectResponseResult<T>(default(T), string.Empty);
+            }
+        
+            if (ReadResponseAsString)
+            {
+                var responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                try
+                {
+                    var typedBody = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(responseText, JsonSerializerSettings);
+                    return new ObjectResponseResult<T>(typedBody, responseText);
+                }
+                catch (Newtonsoft.Json.JsonException exception)
+                {
+                    var message = "Could not deserialize the response body string as " + typeof(T).FullName + ".";
+                    throw new LersException(message, (int)response.StatusCode, responseText, headers, exception);
+                }
+            }
+            else
+            {
+                try
+                {
+                    using (var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                    using (var streamReader = new System.IO.StreamReader(responseStream))
+                    using (var jsonTextReader = new Newtonsoft.Json.JsonTextReader(streamReader))
+                    {
+                        var serializer = Newtonsoft.Json.JsonSerializer.Create(JsonSerializerSettings);
+                        var typedBody = serializer.Deserialize<T>(jsonTextReader);
+                        return new ObjectResponseResult<T>(typedBody, string.Empty);
+                    }
+                }
+                catch (Newtonsoft.Json.JsonException exception)
+                {
+                    var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
+                    throw new LersException(message, (int)response.StatusCode, string.Empty, headers, exception);
+                }
+            }
+        }
+    
+        private string ConvertToString(object value, System.Globalization.CultureInfo cultureInfo)
+        {
+            if (value is System.Enum)
+            {
+                var name = System.Enum.GetName(value.GetType(), value);
+                if (name != null)
+                {
+                    var field = System.Reflection.IntrospectionExtensions.GetTypeInfo(value.GetType()).GetDeclaredField(name);
+                    if (field != null)
+                    {
+                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute)) 
+                            as System.Runtime.Serialization.EnumMemberAttribute;
+                        if (attribute != null)
+                        {
+                            return attribute.Value != null ? attribute.Value : name;
+                        }
+                    }
+        
+                    return System.Convert.ToString(System.Convert.ChangeType(value, System.Enum.GetUnderlyingType(value.GetType()), cultureInfo));
+                }
+            }
+            else if (value is bool) 
+            {
+                return System.Convert.ToString(value, cultureInfo)?.ToLowerInvariant();
+            }
+            else if (value is byte[])
+            {
+                return System.Convert.ToBase64String((byte[]) value);
+            }
+            else if (value != null && value.GetType().IsArray)
+            {
+                var array = System.Linq.Enumerable.OfType<object>((System.Array) value);
+                return string.Join(",", System.Linq.Enumerable.Select(array, o => ConvertToString(o, cultureInfo)));
+            }
+        
+            return System.Convert.ToString(value, cultureInfo);
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.6.2.0 (NJsonSchema v10.1.23.0 (Newtonsoft.Json v12.0.0.0))")]
+    public partial class MeasurePointDeviceErrorsClient 
+    {
+        private string _baseUrl = "";
+        private System.Net.Http.HttpClient _httpClient;
+        private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
+    
+        public MeasurePointDeviceErrorsClient(string baseUrl, System.Net.Http.HttpClient httpClient)
+        {
+            BaseUrl = baseUrl; 
+            _httpClient = httpClient; 
+            _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(CreateSerializerSettings);
+        }
+    
+        private Newtonsoft.Json.JsonSerializerSettings CreateSerializerSettings()
+        {
+            var settings = new Newtonsoft.Json.JsonSerializerSettings();
+            UpdateJsonSerializerSettings(settings);
+            return settings;
+        }
+    
+        public string BaseUrl 
+        {
+            get { return _baseUrl; }
+            set { _baseUrl = value; }
+        }
+    
+        protected Newtonsoft.Json.JsonSerializerSettings JsonSerializerSettings { get { return _settings.Value; } }
+    
+        partial void UpdateJsonSerializerSettings(Newtonsoft.Json.JsonSerializerSettings settings);
+        partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, string url);
+        partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
+        partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
+    
+        /// <summary>Возвращает архив ошибок устройства, связанный с точкой учёта.</summary>
+        /// <param name="id">Идентификатор точки учёта.</param>
+        /// <param name="start">Начало периода запроса.</param>
+        /// <param name="end">Окончание периода запроса.</param>
+        /// <param name="dataTypes">Типы данных, для которых нужно вернуть архивы. Если отсутствует, вернутся все архивы.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="LersException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<MeasurePointDeviceErrorsResponseParameters> GetMeasurePointErrorsAsync(int id, System.DateTimeOffset start, System.DateTimeOffset end, System.Collections.Generic.IEnumerable<DeviceDataType> dataTypes)
+        {
+            return GetMeasurePointErrorsAsync(id, start, end, dataTypes, System.Threading.CancellationToken.None);
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Возвращает архив ошибок устройства, связанный с точкой учёта.</summary>
+        /// <param name="id">Идентификатор точки учёта.</param>
+        /// <param name="start">Начало периода запроса.</param>
+        /// <param name="end">Окончание периода запроса.</param>
+        /// <param name="dataTypes">Типы данных, для которых нужно вернуть архивы. Если отсутствует, вернутся все архивы.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="LersException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<MeasurePointDeviceErrorsResponseParameters> GetMeasurePointErrorsAsync(int id, System.DateTimeOffset start, System.DateTimeOffset end, System.Collections.Generic.IEnumerable<DeviceDataType> dataTypes, System.Threading.CancellationToken cancellationToken)
+        {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+    
+            if (start == null)
+                throw new System.ArgumentNullException("start");
+    
+            if (end == null)
+                throw new System.ArgumentNullException("end");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/v1/Data/MeasurePointDeviceErrors/{id}/{start}/{end}?");
+            urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{start}", System.Uri.EscapeDataString(start.ToString("s", System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{end}", System.Uri.EscapeDataString(end.ToString("s", System.Globalization.CultureInfo.InvariantCulture)));
+            if (dataTypes != null) 
+            {
+                foreach (var item_ in dataTypes) { urlBuilder_.Append(System.Uri.EscapeDataString("dataTypes") + "=").Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append("&"); }
+            }
+            urlBuilder_.Length--;
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "200") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<MeasurePointDeviceErrorsResponseParameters>(response_, headers_).ConfigureAwait(false);
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new LersException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new LersException("Forbidden", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new LersException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+            
+                        return default(MeasurePointDeviceErrorsResponseParameters);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        protected struct ObjectResponseResult<T>
+        {
+            public ObjectResponseResult(T responseObject, string responseText)
+            {
+                this.Object = responseObject;
+                this.Text = responseText;
+            }
+    
+            public T Object { get; }
+    
+            public string Text { get; }
+        }
+    
+        public bool ReadResponseAsString { get; set; }
+        
+        protected virtual async System.Threading.Tasks.Task<ObjectResponseResult<T>> ReadObjectResponseAsync<T>(System.Net.Http.HttpResponseMessage response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers)
+        {
+            if (response == null || response.Content == null)
+            {
+                return new ObjectResponseResult<T>(default(T), string.Empty);
+            }
+        
+            if (ReadResponseAsString)
+            {
+                var responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                try
+                {
+                    var typedBody = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(responseText, JsonSerializerSettings);
+                    return new ObjectResponseResult<T>(typedBody, responseText);
+                }
+                catch (Newtonsoft.Json.JsonException exception)
+                {
+                    var message = "Could not deserialize the response body string as " + typeof(T).FullName + ".";
+                    throw new LersException(message, (int)response.StatusCode, responseText, headers, exception);
+                }
+            }
+            else
+            {
+                try
+                {
+                    using (var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                    using (var streamReader = new System.IO.StreamReader(responseStream))
+                    using (var jsonTextReader = new Newtonsoft.Json.JsonTextReader(streamReader))
+                    {
+                        var serializer = Newtonsoft.Json.JsonSerializer.Create(JsonSerializerSettings);
+                        var typedBody = serializer.Deserialize<T>(jsonTextReader);
+                        return new ObjectResponseResult<T>(typedBody, string.Empty);
+                    }
+                }
+                catch (Newtonsoft.Json.JsonException exception)
+                {
+                    var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
+                    throw new LersException(message, (int)response.StatusCode, string.Empty, headers, exception);
+                }
+            }
+        }
+    
+        private string ConvertToString(object value, System.Globalization.CultureInfo cultureInfo)
+        {
+            if (value is System.Enum)
+            {
+                var name = System.Enum.GetName(value.GetType(), value);
+                if (name != null)
+                {
+                    var field = System.Reflection.IntrospectionExtensions.GetTypeInfo(value.GetType()).GetDeclaredField(name);
+                    if (field != null)
+                    {
+                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute)) 
+                            as System.Runtime.Serialization.EnumMemberAttribute;
+                        if (attribute != null)
+                        {
+                            return attribute.Value != null ? attribute.Value : name;
+                        }
+                    }
+        
+                    return System.Convert.ToString(System.Convert.ChangeType(value, System.Enum.GetUnderlyingType(value.GetType()), cultureInfo));
+                }
+            }
+            else if (value is bool) 
+            {
+                return System.Convert.ToString(value, cultureInfo)?.ToLowerInvariant();
+            }
+            else if (value is byte[])
+            {
+                return System.Convert.ToBase64String((byte[]) value);
+            }
+            else if (value != null && value.GetType().IsArray)
+            {
+                var array = System.Linq.Enumerable.OfType<object>((System.Array) value);
+                return string.Join(",", System.Linq.Enumerable.Select(array, o => ConvertToString(o, cultureInfo)));
+            }
+        
+            return System.Convert.ToString(value, cultureInfo);
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.6.2.0 (NJsonSchema v10.1.23.0 (Newtonsoft.Json v12.0.0.0))")]
     public partial class MeasurePointsClient 
     {
         private string _baseUrl = "";
@@ -1114,11 +1973,11 @@ namespace Lers.Api
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/v1/Core/MeasurePoints?");
             if (getEquipment != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("GetEquipment") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getEquipment, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("getEquipment") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getEquipment, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             if (getAttributes != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("GetAttributes") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getAttributes, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("getAttributes") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getAttributes, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             if (type != null) 
             {
@@ -1234,43 +2093,43 @@ namespace Lers.Api
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
             if (getDiagParams != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("GetDiagParams") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getDiagParams, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("getDiagParams") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getDiagParams, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             if (getAutoPollTask != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("GetAutoPollTask") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getAutoPollTask, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("getAutoPollTask") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getAutoPollTask, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             if (getDevice != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("GetDevice") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getDevice, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("getDevice") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getDevice, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             if (getDeviceReduced != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("GetDeviceReduced") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getDeviceReduced, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("getDeviceReduced") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getDeviceReduced, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             if (getDeviceBinding != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("GetDeviceBinding") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getDeviceBinding, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("getDeviceBinding") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getDeviceBinding, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             if (getHeatLoss != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("GetHeatLoss") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getHeatLoss, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("getHeatLoss") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getHeatLoss, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             if (getSensor != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("GetSensor") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getSensor, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("getSensor") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getSensor, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             if (getReports != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("GetReports") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getReports, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("getReports") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getReports, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             if (getCounter != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("GetCounter") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getCounter, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("getCounter") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getCounter, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             if (getAttributes != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("GetAttributes") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getAttributes, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("getAttributes") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getAttributes, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             urlBuilder_.Length--;
     
@@ -1512,19 +2371,19 @@ namespace Lers.Api
             urlBuilder_.Replace("{end}", System.Uri.EscapeDataString(end.ToString("s", System.Globalization.CultureInfo.InvariantCulture)));
             if (electricDataKind != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("ElectricDataKind") + "=").Append(System.Uri.EscapeDataString(ConvertToString(electricDataKind, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("electricDataKind") + "=").Append(System.Uri.EscapeDataString(ConvertToString(electricDataKind, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             if (includeCalculated != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("IncludeCalculated") + "=").Append(System.Uri.EscapeDataString(ConvertToString(includeCalculated, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("includeCalculated") + "=").Append(System.Uri.EscapeDataString(ConvertToString(includeCalculated, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             if (includeAbsentRecords != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("IncludeAbsentRecords") + "=").Append(System.Uri.EscapeDataString(ConvertToString(includeAbsentRecords, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("includeAbsentRecords") + "=").Append(System.Uri.EscapeDataString(ConvertToString(includeAbsentRecords, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             if (units != null) 
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("Units") + "=").Append(System.Uri.EscapeDataString(ConvertToString(units, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("units") + "=").Append(System.Uri.EscapeDataString(ConvertToString(units, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             urlBuilder_.Length--;
     
@@ -1674,6 +2533,748 @@ namespace Lers.Api
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
                             throw new LersException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        protected struct ObjectResponseResult<T>
+        {
+            public ObjectResponseResult(T responseObject, string responseText)
+            {
+                this.Object = responseObject;
+                this.Text = responseText;
+            }
+    
+            public T Object { get; }
+    
+            public string Text { get; }
+        }
+    
+        public bool ReadResponseAsString { get; set; }
+        
+        protected virtual async System.Threading.Tasks.Task<ObjectResponseResult<T>> ReadObjectResponseAsync<T>(System.Net.Http.HttpResponseMessage response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers)
+        {
+            if (response == null || response.Content == null)
+            {
+                return new ObjectResponseResult<T>(default(T), string.Empty);
+            }
+        
+            if (ReadResponseAsString)
+            {
+                var responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                try
+                {
+                    var typedBody = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(responseText, JsonSerializerSettings);
+                    return new ObjectResponseResult<T>(typedBody, responseText);
+                }
+                catch (Newtonsoft.Json.JsonException exception)
+                {
+                    var message = "Could not deserialize the response body string as " + typeof(T).FullName + ".";
+                    throw new LersException(message, (int)response.StatusCode, responseText, headers, exception);
+                }
+            }
+            else
+            {
+                try
+                {
+                    using (var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                    using (var streamReader = new System.IO.StreamReader(responseStream))
+                    using (var jsonTextReader = new Newtonsoft.Json.JsonTextReader(streamReader))
+                    {
+                        var serializer = Newtonsoft.Json.JsonSerializer.Create(JsonSerializerSettings);
+                        var typedBody = serializer.Deserialize<T>(jsonTextReader);
+                        return new ObjectResponseResult<T>(typedBody, string.Empty);
+                    }
+                }
+                catch (Newtonsoft.Json.JsonException exception)
+                {
+                    var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
+                    throw new LersException(message, (int)response.StatusCode, string.Empty, headers, exception);
+                }
+            }
+        }
+    
+        private string ConvertToString(object value, System.Globalization.CultureInfo cultureInfo)
+        {
+            if (value is System.Enum)
+            {
+                var name = System.Enum.GetName(value.GetType(), value);
+                if (name != null)
+                {
+                    var field = System.Reflection.IntrospectionExtensions.GetTypeInfo(value.GetType()).GetDeclaredField(name);
+                    if (field != null)
+                    {
+                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute)) 
+                            as System.Runtime.Serialization.EnumMemberAttribute;
+                        if (attribute != null)
+                        {
+                            return attribute.Value != null ? attribute.Value : name;
+                        }
+                    }
+        
+                    return System.Convert.ToString(System.Convert.ChangeType(value, System.Enum.GetUnderlyingType(value.GetType()), cultureInfo));
+                }
+            }
+            else if (value is bool) 
+            {
+                return System.Convert.ToString(value, cultureInfo)?.ToLowerInvariant();
+            }
+            else if (value is byte[])
+            {
+                return System.Convert.ToBase64String((byte[]) value);
+            }
+            else if (value != null && value.GetType().IsArray)
+            {
+                var array = System.Linq.Enumerable.OfType<object>((System.Array) value);
+                return string.Join(",", System.Linq.Enumerable.Select(array, o => ConvertToString(o, cultureInfo)));
+            }
+        
+            return System.Convert.ToString(value, cultureInfo);
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.6.2.0 (NJsonSchema v10.1.23.0 (Newtonsoft.Json v12.0.0.0))")]
+    public partial class NodeGroupsClient 
+    {
+        private string _baseUrl = "";
+        private System.Net.Http.HttpClient _httpClient;
+        private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
+    
+        public NodeGroupsClient(string baseUrl, System.Net.Http.HttpClient httpClient)
+        {
+            BaseUrl = baseUrl; 
+            _httpClient = httpClient; 
+            _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(CreateSerializerSettings);
+        }
+    
+        private Newtonsoft.Json.JsonSerializerSettings CreateSerializerSettings()
+        {
+            var settings = new Newtonsoft.Json.JsonSerializerSettings();
+            UpdateJsonSerializerSettings(settings);
+            return settings;
+        }
+    
+        public string BaseUrl 
+        {
+            get { return _baseUrl; }
+            set { _baseUrl = value; }
+        }
+    
+        protected Newtonsoft.Json.JsonSerializerSettings JsonSerializerSettings { get { return _settings.Value; } }
+    
+        partial void UpdateJsonSerializerSettings(Newtonsoft.Json.JsonSerializerSettings settings);
+        partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, string url);
+        partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
+        partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
+    
+        /// <summary>Возвращает список доступных пользователю групп объектов учёта.</summary>
+        /// <param name="nodeId">Идентификатор объекта, по которому нужно отфильтровать группы.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="LersException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<System.Collections.Generic.ICollection<NodeGroupResponseParameters>> GetNodeGroupsAsync(int? nodeId)
+        {
+            return GetNodeGroupsAsync(nodeId, System.Threading.CancellationToken.None);
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Возвращает список доступных пользователю групп объектов учёта.</summary>
+        /// <param name="nodeId">Идентификатор объекта, по которому нужно отфильтровать группы.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="LersException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<NodeGroupResponseParameters>> GetNodeGroupsAsync(int? nodeId, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/v1/Core/NodeGroups?");
+            if (nodeId != null) 
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("nodeId") + "=").Append(System.Uri.EscapeDataString(ConvertToString(nodeId, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            urlBuilder_.Length--;
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "200") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<NodeGroupResponseParameters>>(response_, headers_).ConfigureAwait(false);
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new LersException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new LersException("Forbidden", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new LersException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+            
+                        return default(System.Collections.Generic.ICollection<NodeGroupResponseParameters>);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        protected struct ObjectResponseResult<T>
+        {
+            public ObjectResponseResult(T responseObject, string responseText)
+            {
+                this.Object = responseObject;
+                this.Text = responseText;
+            }
+    
+            public T Object { get; }
+    
+            public string Text { get; }
+        }
+    
+        public bool ReadResponseAsString { get; set; }
+        
+        protected virtual async System.Threading.Tasks.Task<ObjectResponseResult<T>> ReadObjectResponseAsync<T>(System.Net.Http.HttpResponseMessage response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers)
+        {
+            if (response == null || response.Content == null)
+            {
+                return new ObjectResponseResult<T>(default(T), string.Empty);
+            }
+        
+            if (ReadResponseAsString)
+            {
+                var responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                try
+                {
+                    var typedBody = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(responseText, JsonSerializerSettings);
+                    return new ObjectResponseResult<T>(typedBody, responseText);
+                }
+                catch (Newtonsoft.Json.JsonException exception)
+                {
+                    var message = "Could not deserialize the response body string as " + typeof(T).FullName + ".";
+                    throw new LersException(message, (int)response.StatusCode, responseText, headers, exception);
+                }
+            }
+            else
+            {
+                try
+                {
+                    using (var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                    using (var streamReader = new System.IO.StreamReader(responseStream))
+                    using (var jsonTextReader = new Newtonsoft.Json.JsonTextReader(streamReader))
+                    {
+                        var serializer = Newtonsoft.Json.JsonSerializer.Create(JsonSerializerSettings);
+                        var typedBody = serializer.Deserialize<T>(jsonTextReader);
+                        return new ObjectResponseResult<T>(typedBody, string.Empty);
+                    }
+                }
+                catch (Newtonsoft.Json.JsonException exception)
+                {
+                    var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
+                    throw new LersException(message, (int)response.StatusCode, string.Empty, headers, exception);
+                }
+            }
+        }
+    
+        private string ConvertToString(object value, System.Globalization.CultureInfo cultureInfo)
+        {
+            if (value is System.Enum)
+            {
+                var name = System.Enum.GetName(value.GetType(), value);
+                if (name != null)
+                {
+                    var field = System.Reflection.IntrospectionExtensions.GetTypeInfo(value.GetType()).GetDeclaredField(name);
+                    if (field != null)
+                    {
+                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute)) 
+                            as System.Runtime.Serialization.EnumMemberAttribute;
+                        if (attribute != null)
+                        {
+                            return attribute.Value != null ? attribute.Value : name;
+                        }
+                    }
+        
+                    return System.Convert.ToString(System.Convert.ChangeType(value, System.Enum.GetUnderlyingType(value.GetType()), cultureInfo));
+                }
+            }
+            else if (value is bool) 
+            {
+                return System.Convert.ToString(value, cultureInfo)?.ToLowerInvariant();
+            }
+            else if (value is byte[])
+            {
+                return System.Convert.ToBase64String((byte[]) value);
+            }
+            else if (value != null && value.GetType().IsArray)
+            {
+                var array = System.Linq.Enumerable.OfType<object>((System.Array) value);
+                return string.Join(",", System.Linq.Enumerable.Select(array, o => ConvertToString(o, cultureInfo)));
+            }
+        
+            return System.Convert.ToString(value, cultureInfo);
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.6.2.0 (NJsonSchema v10.1.23.0 (Newtonsoft.Json v12.0.0.0))")]
+    public partial class NodesClient 
+    {
+        private string _baseUrl = "";
+        private System.Net.Http.HttpClient _httpClient;
+        private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
+    
+        public NodesClient(string baseUrl, System.Net.Http.HttpClient httpClient)
+        {
+            BaseUrl = baseUrl; 
+            _httpClient = httpClient; 
+            _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(CreateSerializerSettings);
+        }
+    
+        private Newtonsoft.Json.JsonSerializerSettings CreateSerializerSettings()
+        {
+            var settings = new Newtonsoft.Json.JsonSerializerSettings();
+            UpdateJsonSerializerSettings(settings);
+            return settings;
+        }
+    
+        public string BaseUrl 
+        {
+            get { return _baseUrl; }
+            set { _baseUrl = value; }
+        }
+    
+        protected Newtonsoft.Json.JsonSerializerSettings JsonSerializerSettings { get { return _settings.Value; } }
+    
+        partial void UpdateJsonSerializerSettings(Newtonsoft.Json.JsonSerializerSettings settings);
+        partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, string url);
+        partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
+        partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
+    
+        /// <summary>Возвращает список объектов учёта.</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="LersException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<GetNodeListResponseParameters> GetNodesAsync(int? nodeGroupId, bool? getMeasurePoints, bool? getServicemen, bool? getServiceCompanies, bool? getSignaling, bool? getCustomers, bool? getSuppliers, bool? getAttributes)
+        {
+            return GetNodesAsync(nodeGroupId, getMeasurePoints, getServicemen, getServiceCompanies, getSignaling, getCustomers, getSuppliers, getAttributes, System.Threading.CancellationToken.None);
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Возвращает список объектов учёта.</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="LersException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<GetNodeListResponseParameters> GetNodesAsync(int? nodeGroupId, bool? getMeasurePoints, bool? getServicemen, bool? getServiceCompanies, bool? getSignaling, bool? getCustomers, bool? getSuppliers, bool? getAttributes, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/v1/Core/Nodes?");
+            if (nodeGroupId != null) 
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("nodeGroupId") + "=").Append(System.Uri.EscapeDataString(ConvertToString(nodeGroupId, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (getMeasurePoints != null) 
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("getMeasurePoints") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getMeasurePoints, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (getServicemen != null) 
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("getServicemen") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getServicemen, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (getServiceCompanies != null) 
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("getServiceCompanies") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getServiceCompanies, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (getSignaling != null) 
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("getSignaling") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getSignaling, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (getCustomers != null) 
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("getCustomers") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getCustomers, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (getSuppliers != null) 
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("getSuppliers") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getSuppliers, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (getAttributes != null) 
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("getAttributes") + "=").Append(System.Uri.EscapeDataString(ConvertToString(getAttributes, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            urlBuilder_.Length--;
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "200") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<GetNodeListResponseParameters>(response_, headers_).ConfigureAwait(false);
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new LersException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new LersException("Forbidden", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new LersException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+            
+                        return default(GetNodeListResponseParameters);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        protected struct ObjectResponseResult<T>
+        {
+            public ObjectResponseResult(T responseObject, string responseText)
+            {
+                this.Object = responseObject;
+                this.Text = responseText;
+            }
+    
+            public T Object { get; }
+    
+            public string Text { get; }
+        }
+    
+        public bool ReadResponseAsString { get; set; }
+        
+        protected virtual async System.Threading.Tasks.Task<ObjectResponseResult<T>> ReadObjectResponseAsync<T>(System.Net.Http.HttpResponseMessage response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers)
+        {
+            if (response == null || response.Content == null)
+            {
+                return new ObjectResponseResult<T>(default(T), string.Empty);
+            }
+        
+            if (ReadResponseAsString)
+            {
+                var responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                try
+                {
+                    var typedBody = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(responseText, JsonSerializerSettings);
+                    return new ObjectResponseResult<T>(typedBody, responseText);
+                }
+                catch (Newtonsoft.Json.JsonException exception)
+                {
+                    var message = "Could not deserialize the response body string as " + typeof(T).FullName + ".";
+                    throw new LersException(message, (int)response.StatusCode, responseText, headers, exception);
+                }
+            }
+            else
+            {
+                try
+                {
+                    using (var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                    using (var streamReader = new System.IO.StreamReader(responseStream))
+                    using (var jsonTextReader = new Newtonsoft.Json.JsonTextReader(streamReader))
+                    {
+                        var serializer = Newtonsoft.Json.JsonSerializer.Create(JsonSerializerSettings);
+                        var typedBody = serializer.Deserialize<T>(jsonTextReader);
+                        return new ObjectResponseResult<T>(typedBody, string.Empty);
+                    }
+                }
+                catch (Newtonsoft.Json.JsonException exception)
+                {
+                    var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
+                    throw new LersException(message, (int)response.StatusCode, string.Empty, headers, exception);
+                }
+            }
+        }
+    
+        private string ConvertToString(object value, System.Globalization.CultureInfo cultureInfo)
+        {
+            if (value is System.Enum)
+            {
+                var name = System.Enum.GetName(value.GetType(), value);
+                if (name != null)
+                {
+                    var field = System.Reflection.IntrospectionExtensions.GetTypeInfo(value.GetType()).GetDeclaredField(name);
+                    if (field != null)
+                    {
+                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute)) 
+                            as System.Runtime.Serialization.EnumMemberAttribute;
+                        if (attribute != null)
+                        {
+                            return attribute.Value != null ? attribute.Value : name;
+                        }
+                    }
+        
+                    return System.Convert.ToString(System.Convert.ChangeType(value, System.Enum.GetUnderlyingType(value.GetType()), cultureInfo));
+                }
+            }
+            else if (value is bool) 
+            {
+                return System.Convert.ToString(value, cultureInfo)?.ToLowerInvariant();
+            }
+            else if (value is byte[])
+            {
+                return System.Convert.ToBase64String((byte[]) value);
+            }
+            else if (value != null && value.GetType().IsArray)
+            {
+                var array = System.Linq.Enumerable.OfType<object>((System.Array) value);
+                return string.Join(",", System.Linq.Enumerable.Select(array, o => ConvertToString(o, cultureInfo)));
+            }
+        
+            return System.Convert.ToString(value, cultureInfo);
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.6.2.0 (NJsonSchema v10.1.23.0 (Newtonsoft.Json v12.0.0.0))")]
+    public partial class ServerInfoClient 
+    {
+        private string _baseUrl = "";
+        private System.Net.Http.HttpClient _httpClient;
+        private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
+    
+        public ServerInfoClient(string baseUrl, System.Net.Http.HttpClient httpClient)
+        {
+            BaseUrl = baseUrl; 
+            _httpClient = httpClient; 
+            _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(CreateSerializerSettings);
+        }
+    
+        private Newtonsoft.Json.JsonSerializerSettings CreateSerializerSettings()
+        {
+            var settings = new Newtonsoft.Json.JsonSerializerSettings();
+            UpdateJsonSerializerSettings(settings);
+            return settings;
+        }
+    
+        public string BaseUrl 
+        {
+            get { return _baseUrl; }
+            set { _baseUrl = value; }
+        }
+    
+        protected Newtonsoft.Json.JsonSerializerSettings JsonSerializerSettings { get { return _settings.Value; } }
+    
+        partial void UpdateJsonSerializerSettings(Newtonsoft.Json.JsonSerializerSettings settings);
+        partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, string url);
+        partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
+        partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
+    
+        /// <summary>Возвращает версию сервера ЛЭРС УЧЁТ.</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="LersException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<ServerInfo> GetVersionAsync()
+        {
+            return GetVersionAsync(System.Threading.CancellationToken.None);
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Возвращает версию сервера ЛЭРС УЧЁТ.</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="LersException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<ServerInfo> GetVersionAsync(System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/v1/ServerInfo");
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "200") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ServerInfo>(response_, headers_).ConfigureAwait(false);
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new LersException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+            
+                        return default(ServerInfo);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Возвращает дополнительную информацию для вошедшего пользователя.</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="LersException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<LoginExtraInfo> GetExtraInfoAsync()
+        {
+            return GetExtraInfoAsync(System.Threading.CancellationToken.None);
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Возвращает дополнительную информацию для вошедшего пользователя.</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="LersException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<LoginExtraInfo> GetExtraInfoAsync(System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/v1/ServerInfo/Extra");
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "200") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<LoginExtraInfo>(response_, headers_).ConfigureAwait(false);
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new LersException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ == "403") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new LersException("Forbidden", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new LersException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+            
+                        return default(LoginExtraInfo);
                     }
                     finally
                     {
@@ -4816,892 +6417,6 @@ namespace Lers.Api
     
     }
     
-    /// <summary>Запрос аутентификации на сервере по логину и паролю.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class AuthenticatePlainRequestParameters 
-    {
-        /// <summary>Имя входа.</summary>
-        [Newtonsoft.Json.JsonProperty("login", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(30, MinimumLength = 1)]
-        public string Login { get; set; }
-    
-        /// <summary>Пароль.</summary>
-        [Newtonsoft.Json.JsonProperty("password", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Password { get; set; }
-    
-        /// <summary>Название приложения, через которое клиент входит на сервер.</summary>
-        [Newtonsoft.Json.JsonProperty("application", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Application { get; set; }
-    
-    
-    }
-    
-    /// <summary>Ответ на запрос авторизации через WEB API.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class LoginResponseParameters 
-    {
-        /// <summary>Токен для выполнения запросов.</summary>
-        [Newtonsoft.Json.JsonProperty("token", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Token { get; set; }
-    
-        /// <summary>Дата истечения токена.</summary>
-        [Newtonsoft.Json.JsonProperty("tokenExpiration", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTimeOffset TokenExpiration { get; set; }
-    
-    
-    }
-    
-    /// <summary>Запрос аутентификации на сервере.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class AuthenticateRequestParameters 
-    {
-        /// <summary>Название приложения, через которое клиент входит на сервер.</summary>
-        [Newtonsoft.Json.JsonProperty("application", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Application { get; set; }
-    
-    
-    }
-    
-    /// <summary>Определяет режим проверки доступа к точке учета.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public enum MeasurePointCheckAccessMode
-    {
-        [System.Runtime.Serialization.EnumMember(Value = @"SystemType")]
-        SystemType = 0,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"Explicit")]
-        Explicit = 1,
-    
-    }
-    
-    /// <summary>Стартовая страница, открываемая при входе в систему.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public enum StartPage
-    {
-        [System.Runtime.Serialization.EnumMember(Value = @"None")]
-        None = 0,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"NodeList")]
-        NodeList = 1,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"MeasurePointList")]
-        MeasurePointList = 2,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"Map")]
-        Map = 3,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"TenantOffice")]
-        TenantOffice = 4,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"SummaryCurrentsMonitor")]
-        SummaryCurrentsMonitor = 5,
-    
-    }
-    
-    /// <summary>Диапазон IP-адресов, с которых разрешено/запрещено работать учетной записи.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class AccountIpAddress 
-    {
-        /// <summary>Идентификатор учетной записи.</summary>
-        [Newtonsoft.Json.JsonProperty("accountId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int AccountId { get; set; }
-    
-        /// <summary>Начальный Ip-адрес диапазона.</summary>
-        [Newtonsoft.Json.JsonProperty("startIP", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string StartIP { get; set; }
-    
-        /// <summary>Конечный IP-адрес диапазона.</summary>
-        [Newtonsoft.Json.JsonProperty("endIP", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string EndIP { get; set; }
-    
-    
-    }
-    
-    /// <summary>Режим работы центра печати отчетов.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public enum ReportPrintCenterMode
-    {
-        [System.Runtime.Serialization.EnumMember(Value = @"ViewPrepared")]
-        ViewPrepared = 0,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"CreateNew")]
-        CreateNew = 1,
-    
-    }
-    
-    /// <summary>Режимы аутентификации, разрешённые для учётной записи.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public enum AccountAuthenticationMode
-    {
-        [System.Runtime.Serialization.EnumMember(Value = @"None")]
-        None = 0,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"Basic")]
-        Basic = 1,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"Windows")]
-        Windows = 2,
-    
-    }
-    
-    /// <summary>Учетная запись</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class Account 
-    {
-        /// <summary>Идентификатор учётной записи в системе безопасности.</summary>
-        [Newtonsoft.Json.JsonProperty("trusteeId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int TrusteeId { get; set; }
-    
-        /// <summary>Имя входа учетной записи</summary>
-        [Newtonsoft.Json.JsonProperty("login", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Login { get; set; }
-    
-        /// <summary>Флаг блокировки учетной записи</summary>
-        [Newtonsoft.Json.JsonProperty("isDisabled", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsDisabled { get; set; }
-    
-        /// <summary>Запретить смену пароля пользователем.</summary>
-        [Newtonsoft.Json.JsonProperty("disablePasswordChange", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool DisablePasswordChange { get; set; }
-    
-        /// <summary>Признак того, что учетная запись входит в системную группу Администраторы.</summary>
-        [Newtonsoft.Json.JsonProperty("isAdmin", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsAdmin { get; set; }
-    
-        /// <summary>Учетная запись имеет доступ ко всем объектам учета и жилым домам.</summary>
-        [Newtonsoft.Json.JsonProperty("hasAllNodeAccess", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool HasAllNodeAccess { get; set; }
-    
-        /// <summary>Режим проверки доступа к точкам учета.</summary>
-        [Newtonsoft.Json.JsonProperty("measurePointCheckAccessMode", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public MeasurePointCheckAccessMode MeasurePointCheckAccessMode { get; set; }
-    
-        /// <summary>Таймаут неактивности сеансов работы, открытых учетной записью</summary>
-        [Newtonsoft.Json.JsonProperty("sessionTimeout", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int SessionTimeout { get; set; }
-    
-        /// <summary>Максимальное количество одновременных сеансов работы под учетной записью.
-        /// При превышении этого количество каждый новый сеанс автоматически закрывает самый старый сеанс.</summary>
-        [Newtonsoft.Json.JsonProperty("maxSessionCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.Obsolete]
-        public int MaxSessionCount { get; set; }
-    
-        /// <summary>Номер мобильного телефона.</summary>
-        [Newtonsoft.Json.JsonProperty("mobilePhone", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string MobilePhone { get; set; }
-    
-        /// <summary>Адрес электронной почты.</summary>
-        [Newtonsoft.Json.JsonProperty("eMail", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string EMail { get; set; }
-    
-        /// <summary>Шлюз e-mail для отправки SMS.</summary>
-        [Newtonsoft.Json.JsonProperty("smsEMail", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string SmsEMail { get; set; }
-    
-        /// <summary>Отправлять SMS-сообщения через GSM-модем вместо e-mail шлюза.</summary>
-        [Newtonsoft.Json.JsonProperty("sendSmsViaModem", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool SendSmsViaModem { get; set; }
-    
-        /// <summary>Начало временного интервала, в течение которого можно отправлять SMS-сообщения (в минутах).</summary>
-        [Newtonsoft.Json.JsonProperty("notifyStartTime", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int NotifyStartTime { get; set; }
-    
-        /// <summary>Окончание временного интервала, в течение которого можно отправлять SMS-сообщения (в минутах).</summary>
-        [Newtonsoft.Json.JsonProperty("notifyEndTime", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int NotifyEndTime { get; set; }
-    
-        /// <summary>Использовать интервал отправки SMS и для EMail тоже.</summary>
-        [Newtonsoft.Json.JsonProperty("useSendIntervalForEmail", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool UseSendIntervalForEmail { get; set; }
-    
-        /// <summary>Определяет, разрешены ли учетной записи все отчеты.</summary>
-        [Newtonsoft.Json.JsonProperty("allowAllReports", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool AllowAllReports { get; set; }
-    
-        /// <summary>Определяет, разрешены ли учетной записи все мнемосхемы.</summary>
-        [Newtonsoft.Json.JsonProperty("allowAllDiagrams", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool AllowAllDiagrams { get; set; }
-    
-        /// <summary>Список инженерных систем, разрешенных учетной записи.</summary>
-        [Newtonsoft.Json.JsonProperty("allowedSystems", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public SystemType AllowedSystems { get; set; }
-    
-        /// <summary>Дата и время, по истечении которых заканчивается срок действия учетной записи</summary>
-        [Newtonsoft.Json.JsonProperty("expirationDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTimeOffset? ExpirationDate { get; set; }
-    
-        /// <summary>Режим использования списка IP-адресов, связанных с учетной записью.
-        /// true - разрешен вход только с IP-адресов, указанных в списке;
-        /// false - разрешен вход с любых IP-адресов, кроме указанных в списке;</summary>
-        [Newtonsoft.Json.JsonProperty("ipAddressListMode", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IpAddressListMode { get; set; }
-    
-        /// <summary>Ограничить работу личным кабинетом жильца.</summary>
-        [Newtonsoft.Json.JsonProperty("tenantOfficeOnly", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool TenantOfficeOnly { get; set; }
-    
-        /// <summary>Стартовая страница, открываемая при входе в систему.</summary>
-        [Newtonsoft.Json.JsonProperty("startPage", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public StartPage StartPage { get; set; }
-    
-        /// <summary>Список диапазонов IP-адресов, с которых разрешено/запрещено работать учетной записи.</summary>
-        [Newtonsoft.Json.JsonProperty("ipList", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.ICollection<AccountIpAddress> IpList { get; set; }
-    
-        /// <summary>Дата и время установки пароля.</summary>
-        [Newtonsoft.Json.JsonProperty("passwordSetDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTimeOffset PasswordSetDate { get; set; }
-    
-        /// <summary>Дата и время установки блокировки.</summary>
-        [Newtonsoft.Json.JsonProperty("disablingDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTimeOffset? DisablingDate { get; set; }
-    
-        /// <summary>Дата и время последнего входа учетной записи.</summary>
-        [Newtonsoft.Json.JsonProperty("lastLoginDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTimeOffset? LastLoginDate { get; set; }
-    
-        /// <summary>Режим работы центра печати отчетов.</summary>
-        [Newtonsoft.Json.JsonProperty("reportCenterFormMode", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public ReportPrintCenterMode ReportCenterFormMode { get; set; }
-    
-        /// <summary>Разрешённые для учётной записи режимы аутентификации.</summary>
-        [Newtonsoft.Json.JsonProperty("authenticationModes", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public AccountAuthenticationMode AuthenticationModes { get; set; }
-    
-        /// <summary>Идентификатор безопасности учётной записи Windows,
-        /// которая сопоставлена с этой учётной записью ЛЭРС УЧЁТ.</summary>
-        [Newtonsoft.Json.JsonProperty("windowsSid", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string WindowsSid { get; set; }
-    
-        /// <summary>Отмечает запрещён ли вход данной учётной записи.</summary>
-        [Newtonsoft.Json.JsonProperty("loginNotAllowed", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool LoginNotAllowed { get; set; }
-    
-        /// <summary>Версия токена учётной записи.</summary>
-        [Newtonsoft.Json.JsonProperty("tokenVersion", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int TokenVersion { get; set; }
-    
-        /// <summary>Идентификатор учетной записи.</summary>
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int Id { get; set; }
-    
-        /// <summary>Отображаемое имя учетной записи.</summary>
-        [Newtonsoft.Json.JsonProperty("displayName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string DisplayName { get; set; }
-    
-        /// <summary>Описание учетной записи.</summary>
-        [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Description { get; set; }
-    
-        /// <summary>Признак системной учетной записи.</summary>
-        [Newtonsoft.Json.JsonProperty("isSystem", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsSystem { get; set; }
-    
-        /// <summary>Идентификатор домена учётной записи.</summary>
-        [Newtonsoft.Json.JsonProperty("divisionId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int? DivisionId { get; set; }
-    
-    
-    }
-    
-    /// <summary>Права доступа, которыми может обладать учетная запись или группа учетных записей.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public enum AccessRight
-    {
-        [System.Runtime.Serialization.EnumMember(Value = @"None")]
-        None = 0,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditNode")]
-        EditNode = 1,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditSystemParameters")]
-        EditSystemParameters = 2,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ViewData")]
-        ViewData = 3,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"PrintReport")]
-        PrintReport = 4,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditSupplier")]
-        EditSupplier = 5,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ViewDeviceConfig")]
-        ViewDeviceConfig = 6,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"TenantOffice")]
-        TenantOffice = 7,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditReport")]
-        EditReport = 8,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"Activation")]
-        Activation = 9,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ViewDeviceEvents")]
-        ViewDeviceEvents = 10,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ManualInputCounterTotals")]
-        ManualInputCounterTotals = 11,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditOutdoorTemperature")]
-        EditOutdoorTemperature = 12,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditEquipmentModel")]
-        EditEquipmentModel = 13,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditRoom")]
-        EditRoom = 14,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ContractAnalysis")]
-        ContractAnalysis = 15,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditReportGeneratingTask")]
-        EditReportGeneratingTask = 16,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"TemperatureChart")]
-        TemperatureChart = 17,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"HouseSummary")]
-        HouseSummary = 18,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"DisconnectGprsController")]
-        DisconnectGprsController = 19,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"HouseBalance")]
-        HouseBalance = 20,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditEquipment")]
-        EditEquipment = 21,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"BrowseNonPublicNodeFile")]
-        BrowseNonPublicNodeFile = 22,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ExportToXml80020")]
-        ExportToXml80020 = 23,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditPollPort")]
-        EditPollPort = 24,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditServiceman")]
-        EditServiceman = 25,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"SaveData")]
-        SaveData = 26,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditInspector")]
-        EditInspector = 27,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditAnnouncement")]
-        EditAnnouncement = 28,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ViewGsmStatistics")]
-        ViewGsmStatistics = 29,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ViewControllersStatistics")]
-        ViewControllersStatistics = 30,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"CallGprsController")]
-        CallGprsController = 31,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditBalanceGroup")]
-        EditBalanceGroup = 32,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditNodeJob")]
-        EditNodeJob = 33,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditAccount")]
-        EditAccount = 34,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ForceStopPoll")]
-        ForceStopPoll = 35,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ViewPreparedReport")]
-        ViewPreparedReport = 36,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"PollCurrents")]
-        PollCurrents = 37,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditOwnNotificationSettings")]
-        EditOwnNotificationSettings = 38,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ControlMessageQueue")]
-        ControlMessageQueue = 39,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditTerritory")]
-        EditTerritory = 40,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditNodeJobResolution")]
-        EditNodeJobResolution = 41,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"AllowAnyPollPort")]
-        AllowAnyPollPort = 42,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditMeasurePoint")]
-        EditMeasurePoint = 43,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"CloseIncident")]
-        CloseIncident = 44,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"DeleteIncident")]
-        DeleteIncident = 45,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"MoveMeasurePoint")]
-        MoveMeasurePoint = 46,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditNodeGroup")]
-        EditNodeGroup = 47,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditServiceCompany")]
-        EditServiceCompany = 48,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditCustomer")]
-        EditCustomer = 49,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditMap")]
-        EditMap = 50,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditPlugins")]
-        EditPlugins = 51,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditReportTemplate")]
-        EditReportTemplate = 52,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"SendMessage")]
-        SendMessage = 53,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"BackupDatabase")]
-        BackupDatabase = 54,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"InstallSystemUpdate")]
-        InstallSystemUpdate = 55,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"GetUserSessionList")]
-        GetUserSessionList = 56,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"CloseUserSession")]
-        CloseUserSession = 57,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ViewSystemLog")]
-        ViewSystemLog = 58,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ViewAccountLog")]
-        ViewAccountLog = 59,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ViewUserSessionLog")]
-        ViewUserSessionLog = 60,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ViewMessageLog")]
-        ViewMessageLog = 61,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ViewLogFiles")]
-        ViewLogFiles = 62,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"PollQueueControl")]
-        PollQueueControl = 63,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ViewPollSession")]
-        ViewPollSession = 64,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ManualPoll")]
-        ManualPoll = 65,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"RemoteConsole")]
-        RemoteConsole = 66,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ViewIncident")]
-        ViewIncident = 67,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ViewMap")]
-        ViewMap = 68,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"DeletePreparedReport")]
-        DeletePreparedReport = 69,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditServicingStatuses")]
-        EditServicingStatuses = 70,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"DeleteNode")]
-        DeleteNode = 71,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"DeleteMeasurePoint")]
-        DeleteMeasurePoint = 72,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"DeleteRoom")]
-        DeleteRoom = 73,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"DeleteEquipment")]
-        DeleteEquipment = 74,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ViewAccountNodeJob")]
-        ViewAccountNodeJob = 75,
-    
-    }
-    
-    /// <summary>Группа учетных записей.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class AccountGroup 
-    {
-        /// <summary>Идентификатор.</summary>
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int Id { get; set; }
-    
-        /// <summary>Идентификатор системы безопасности.</summary>
-        [Newtonsoft.Json.JsonProperty("trusteeId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int TrusteeId { get; set; }
-    
-        /// <summary>Указывает что для группы учётных записей разрешены все мнемосхемы.</summary>
-        [Newtonsoft.Json.JsonProperty("allowAllDiagrams", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool AllowAllDiagrams { get; set; }
-    
-        /// <summary>Указывает что для группы учётных записей разрешены все отчёты.</summary>
-        [Newtonsoft.Json.JsonProperty("allowAllReports", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool AllowAllReports { get; set; }
-    
-        /// <summary>Наименование.</summary>
-        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
-        public string Title { get; set; }
-    
-        /// <summary>Признак того, что группа является системной.</summary>
-        [Newtonsoft.Json.JsonProperty("isSystem", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsSystem { get; set; }
-    
-        /// <summary>Идентификатор подразделения, в которое входит учётная запись.</summary>
-        [Newtonsoft.Json.JsonProperty("divisionId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int? DivisionId { get; set; }
-    
-    
-    }
-    
-    /// <summary>Информация о текущем вошедшем пользователе.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class CurrentLoginInfo 
-    {
-        /// <summary>Параметры текущей учётной записи.</summary>
-        [Newtonsoft.Json.JsonProperty("account", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public Account Account { get; set; }
-    
-        /// <summary>Действующие разрешения для текущей учетной записи.</summary>
-        [Newtonsoft.Json.JsonProperty("permissions", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public System.Collections.Generic.ICollection<AccessRight> Permissions { get; set; }
-    
-        /// <summary>Группы учетных записей, в которые входит текущая учетная запись.</summary>
-        [Newtonsoft.Json.JsonProperty("accountGroups", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.ICollection<AccountGroup> AccountGroups { get; set; }
-    
-    
-    }
-    
-    /// <summary>Вид данных по электроэнергии.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public enum ElectricDataKind
-    {
-        [System.Runtime.Serialization.EnumMember(Value = @"Raw")]
-        Raw = 0,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"Real")]
-        Real = 1,
-    
-    }
-    
-    /// <summary>Типы единиц измерения в которых можно запросить данные по точке учёта.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public enum MeasurePointDataUnitsRequestType
-    {
-        [System.Runtime.Serialization.EnumMember(Value = @"SystemUnits")]
-        SystemUnits = 0,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ConfiguredUnits")]
-        ConfiguredUnits = 1,
-    
-    }
-    
-    /// <summary>Атрибуты записи с потреблением.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public enum ConsumptionRecordAttributes
-    {
-        [System.Runtime.Serialization.EnumMember(Value = @"None")]
-        None = 0,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ExternalData")]
-        ExternalData = 1,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"IncompleteData")]
-        IncompleteData = 2,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"CalculatedByDeviceTotals")]
-        CalculatedByDeviceTotals = 3,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"MissingInDevice")]
-        MissingInDevice = 4,
-    
-    }
-    
-    /// <summary>Значение параметра</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class DataParameterValue 
-    {
-        /// <summary>Параметр</summary>
-        [Newtonsoft.Json.JsonProperty("dataParameter", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public DataParameter DataParameter { get; set; }
-    
-        /// <summary>Значение</summary>
-        [Newtonsoft.Json.JsonProperty("value", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double Value { get; set; }
-    
-        /// <summary>Флаг недостоверного значения</summary>
-        [Newtonsoft.Json.JsonProperty("isBad", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsBad { get; set; }
-    
-        /// <summary>Флаг рассчитанного значения</summary>
-        [Newtonsoft.Json.JsonProperty("isCalc", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsCalc { get; set; }
-    
-        /// <summary>Флаг интерполированного значения</summary>
-        [Newtonsoft.Json.JsonProperty("isInterpolated", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsInterpolated { get; set; }
-    
-        /// <summary>Флаг сброшенного интегратора</summary>
-        [Newtonsoft.Json.JsonProperty("isReset", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsReset { get; set; }
-    
-    
-    }
-    
-    /// <summary>Запись с данными о потреблении.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class MeasurePointDataConsumptionRecord 
-    {
-        /// <summary>Дата и время.</summary>
-        [Newtonsoft.Json.JsonProperty("dateTime", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTimeOffset DateTime { get; set; }
-    
-        /// <summary>Список атрибутов записи.</summary>
-        [Newtonsoft.Json.JsonProperty("attributes", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public ConsumptionRecordAttributes Attributes { get; set; }
-    
-        /// <summary>Тип ресурса к которому относится запись с данными.</summary>
-        [Newtonsoft.Json.JsonProperty("resourceKind", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public ResourceKind ResourceKind { get; set; }
-    
-        /// <summary>Возвращает значение, определяющее, является ли запись пустой (отсутствующей).</summary>
-        [Newtonsoft.Json.JsonProperty("isEmpty", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsEmpty { get; set; }
-    
-        /// <summary>Записи с данными о потреблении.</summary>
-        [Newtonsoft.Json.JsonProperty("dataParameters", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.ICollection<DataParameterValue> DataParameters { get; set; }
-    
-    
-    }
-    
-    /// <summary>Категория параметра данных.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public enum DataParameterCategory
-    {
-        [System.Runtime.Serialization.EnumMember(Value = @"None")]
-        None = 0,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"Temperature")]
-        Temperature = 1,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"Pressure")]
-        Pressure = 2,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"Mass")]
-        Mass = 3,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"Volume")]
-        Volume = 4,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"Heat")]
-        Heat = 5,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"Time")]
-        Time = 6,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ActiveElectricalEnergy")]
-        ActiveElectricalEnergy = 7,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ReactiveElectricalEnergy")]
-        ReactiveElectricalEnergy = 8,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ActiveElectricPower")]
-        ActiveElectricPower = 9,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ReactiveElectricPower")]
-        ReactiveElectricPower = 10,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ApparentElectricPower")]
-        ApparentElectricPower = 11,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"Voltage")]
-        Voltage = 12,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ElectricCurrent")]
-        ElectricCurrent = 13,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"PhaseAngle")]
-        PhaseAngle = 14,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"PowerFactor")]
-        PowerFactor = 15,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"Frequency")]
-        Frequency = 16,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"WaterLevel")]
-        WaterLevel = 17,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"PressureDrop")]
-        PressureDrop = 18,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ValvePercent")]
-        ValvePercent = 19,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"Coefficient")]
-        Coefficient = 20,
-    
-    }
-    
-    /// <summary>Единицы измерения</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class DataParametersUnitPair 
-    {
-        /// <summary>Категория параметра данных</summary>
-        [Newtonsoft.Json.JsonProperty("dataParameterCategory", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public DataParameterCategory DataParameterCategory { get; set; }
-    
-        /// <summary>Единицы измерения</summary>
-        [Newtonsoft.Json.JsonProperty("unit", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public Unit Unit { get; set; }
-    
-    
-    }
-    
-    /// <summary>Ответ на получение записей с потреблением</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class GetMeasurePointConsumptionResponse 
-    {
-        /// <summary>Тип давления</summary>
-        [Newtonsoft.Json.JsonProperty("pressureType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public PressureType PressureType { get; set; }
-    
-        /// <summary>Записи с месячным потреблением.</summary>
-        [Newtonsoft.Json.JsonProperty("monthConsumption", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.ICollection<MeasurePointDataConsumptionRecord> MonthConsumption { get; set; }
-    
-        /// <summary>Записи с суточным потреблением.</summary>
-        [Newtonsoft.Json.JsonProperty("dayConsumption", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.ICollection<MeasurePointDataConsumptionRecord> DayConsumption { get; set; }
-    
-        /// <summary>Записи с часовым потреблением.</summary>
-        [Newtonsoft.Json.JsonProperty("hourConsumption", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.ICollection<MeasurePointDataConsumptionRecord> HourConsumption { get; set; }
-    
-        /// <summary>Записи с текущим потреблением.</summary>
-        [Newtonsoft.Json.JsonProperty("currentConsumption", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.ICollection<MeasurePointDataConsumptionRecord> CurrentConsumption { get; set; }
-    
-        /// <summary>Единицы измерения для категории параметров.</summary>
-        [Newtonsoft.Json.JsonProperty("dataParametersUnit", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.ICollection<DataParametersUnitPair> DataParametersUnit { get; set; }
-    
-    
-    }
-    
-    /// <summary>Параметры сохранения потребления.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class SaveConsumptionParameters 
-    {
-        /// <summary>Тип данных потребления.</summary>
-        [Newtonsoft.Json.JsonProperty("dataType", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public DeviceDataType DataType { get; set; }
-    
-        /// <summary>Тип сохраняемого давления по воде.</summary>
-        [Newtonsoft.Json.JsonProperty("pressureType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public PressureType PressureType { get; set; }
-    
-        /// <summary>Потребление для сохранения.</summary>
-        [Newtonsoft.Json.JsonProperty("consumption", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<MeasurePointDataConsumptionRecord> Consumption { get; set; } = new System.Collections.ObjectModel.Collection<MeasurePointDataConsumptionRecord>();
-    
-    
-    }
-    
-    /// <summary>Единица измерения для параметра.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class UnitOfMeasurementObject 
-    {
-        /// <summary>Тип измеряемого параметра.</summary>
-        [Newtonsoft.Json.JsonProperty("category", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public DataParameterCategory Category { get; set; }
-    
-        /// <summary>Единица измерения.</summary>
-        [Newtonsoft.Json.JsonProperty("unit", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public Unit Unit { get; set; }
-    
-    
-    }
-    
-    /// <summary>Параметры запроса сохранения потребления по точке учёта.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class SaveConsumptionRequestParameters 
-    {
-        /// <summary>Данные потребления.</summary>
-        [Newtonsoft.Json.JsonProperty("data", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        public SaveConsumptionParameters Data { get; set; } = new SaveConsumptionParameters();
-    
-        /// <summary>Единицы измерения, в которых передаются величины для сохранения (необязательный параметр).</summary>
-        [Newtonsoft.Json.JsonProperty("unitsOfMeasurement", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.ICollection<UnitOfMeasurementObject> UnitsOfMeasurement { get; set; }
-    
-    
-    }
-    
-    /// <summary>Параметры ответа на запрос списка точек учета.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class GetMeasurePointListResponseParameters 
-    {
-        /// <summary>Список точек учета.</summary>
-        [Newtonsoft.Json.JsonProperty("measurePoints", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.ICollection<MeasurePoint> MeasurePoints { get; set; }
-    
-        /// <summary>Список оборудования на точках учета.</summary>
-        [Newtonsoft.Json.JsonProperty("equipment", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.ICollection<Equipment> Equipment { get; set; }
-    
-        /// <summary>Список моделей оборудования.</summary>
-        [Newtonsoft.Json.JsonProperty("equipmentModels", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.ICollection<EquipmentModel> EquipmentModels { get; set; }
-    
-    
-    }
-    
     /// <summary>Типы нештатных ситуаций</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
     public enum IncidentType
@@ -6005,6 +6720,1456 @@ namespace Lers.Api
     
         [System.Runtime.Serialization.EnumMember(Value = @"ReturnUnderheat")]
         ReturnUnderheat = 99,
+    
+    }
+    
+    /// <summary>Важность нештатной ситуации</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum IncidentImportance
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"None")]
+        None = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Information")]
+        Information = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Warning")]
+        Warning = 2,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Critical")]
+        Critical = 3,
+    
+    }
+    
+    /// <summary>Нештатная ситуация</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class Incident 
+    {
+        /// <summary>Идентификатор нештатной ситуации</summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Id { get; set; }
+    
+        /// <summary>Идентификатор объекта учета, связанного с нештатной ситуацией</summary>
+        [Newtonsoft.Json.JsonProperty("nodeId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int NodeId { get; set; }
+    
+        /// <summary>Идентификатор точки учета, связанной с нештатной ситуацией</summary>
+        [Newtonsoft.Json.JsonProperty("measurePointId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? MeasurePointId { get; set; }
+    
+        /// <summary>Идентификатор оборудования, связанного с нештатной ситуацией.</summary>
+        [Newtonsoft.Json.JsonProperty("equipmentId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? EquipmentId { get; set; }
+    
+        /// <summary>Тип нештатной ситуации</summary>
+        [Newtonsoft.Json.JsonProperty("incidentType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public IncidentType IncidentType { get; set; }
+    
+        /// <summary>Дата возникновения</summary>
+        [Newtonsoft.Json.JsonProperty("startDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset StartDate { get; set; }
+    
+        /// <summary>Дата окончания</summary>
+        [Newtonsoft.Json.JsonProperty("endDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset EndDate { get; set; }
+    
+        /// <summary>Дата диагностики</summary>
+        [Newtonsoft.Json.JsonProperty("diagDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset DiagDate { get; set; }
+    
+        /// <summary>Важность</summary>
+        [Newtonsoft.Json.JsonProperty("importance", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public IncidentImportance Importance { get; set; }
+    
+        /// <summary>Признак закрытия</summary>
+        [Newtonsoft.Json.JsonProperty("isClosed", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsClosed { get; set; }
+    
+        /// <summary>Текущее описание</summary>
+        [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Description { get; set; }
+    
+        /// <summary>Краткое описание.</summary>
+        [Newtonsoft.Json.JsonProperty("shortDesc", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ShortDesc { get; set; }
+    
+        /// <summary>Тип данных, по которым была диагностирована нештатная ситуация.</summary>
+        [Newtonsoft.Json.JsonProperty("dataType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public DeviceDataType DataType { get; set; }
+    
+        /// <summary>Наименование точки / объекта</summary>
+        [Newtonsoft.Json.JsonProperty("entityTitle", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EntityTitle { get; set; }
+    
+    
+    }
+    
+    /// <summary>Описывает запись в журнале  нештатной ситуации.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class IncidentLog 
+    {
+        /// <summary>Идентификатор нештатной ситуации, к которой относится запись.</summary>
+        [Newtonsoft.Json.JsonProperty("incidentId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int IncidentId { get; set; }
+    
+        /// <summary>Дата и время записи сообщения.</summary>
+        [Newtonsoft.Json.JsonProperty("date", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset Date { get; set; }
+    
+        /// <summary>Текст сообщения.</summary>
+        [Newtonsoft.Json.JsonProperty("message", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Message { get; set; }
+    
+        /// <summary>Текст короткого сообщения для отображения в таблицах/графиках/отчетах и отправки по SMS.</summary>
+        [Newtonsoft.Json.JsonProperty("shortMessage", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ShortMessage { get; set; }
+    
+        /// <summary>Тип нештатной ситуации.</summary>
+        [Newtonsoft.Json.JsonProperty("incidentType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public IncidentType IncidentType { get; set; }
+    
+    
+    }
+    
+    /// <summary>Параметры ответа на получение нештатной ситуации.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class IncidentGetResponseParameters 
+    {
+        /// <summary>Нештатная ситуация</summary>
+        [Newtonsoft.Json.JsonProperty("incident", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Incident Incident { get; set; }
+    
+        /// <summary>Журнал нештатной ситуации.</summary>
+        [Newtonsoft.Json.JsonProperty("log", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<IncidentLog> Log { get; set; }
+    
+    
+    }
+    
+    /// <summary>Параметры создания нештатной ситуации.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class CreateIncidentRequestParameters 
+    {
+        /// <summary>Тип НС.</summary>
+        [Newtonsoft.Json.JsonProperty("incidentType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public IncidentType IncidentType { get; set; }
+    
+        /// <summary>Важность НС.</summary>
+        [Newtonsoft.Json.JsonProperty("importance", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public IncidentImportance Importance { get; set; }
+    
+        /// <summary>Дата начала НС. Если отсутствует, за дату начала будет принята текущая дата сервера.</summary>
+        [Newtonsoft.Json.JsonProperty("startDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? StartDate { get; set; }
+    
+        /// <summary>Описание возникшей НС.</summary>
+        [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Description { get; set; }
+    
+        /// <summary>Краткое описание возникшей НС.</summary>
+        [Newtonsoft.Json.JsonProperty("shortDescription", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ShortDescription { get; set; }
+    
+        /// <summary>Идентификатор объекта, с которым связана НС.</summary>
+        [Newtonsoft.Json.JsonProperty("nodeId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int NodeId { get; set; }
+    
+        /// <summary>Идентификатор точки учёта, с которой связана НС.</summary>
+        [Newtonsoft.Json.JsonProperty("measurePointId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? MeasurePointId { get; set; }
+    
+        /// <summary>Идентификатор устройства, с которым связана НС.</summary>
+        [Newtonsoft.Json.JsonProperty("equipmentId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? EquipmentId { get; set; }
+    
+    
+    }
+    
+    /// <summary>Параметры созданной записи.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class BaseSaveResponseParameters 
+    {
+        /// <summary>Идентификатор созданной или обновлённой записи.</summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Id { get; set; }
+    
+        /// <summary>Дата и время создания записи.</summary>
+        [Newtonsoft.Json.JsonProperty("dateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? DateTime { get; set; }
+    
+    
+    }
+    
+    /// <summary>Запрос аутентификации на сервере по логину и паролю.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class AuthenticatePlainRequestParameters 
+    {
+        /// <summary>Имя входа.</summary>
+        [Newtonsoft.Json.JsonProperty("login", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.StringLength(30, MinimumLength = 1)]
+        public string Login { get; set; }
+    
+        /// <summary>Пароль.</summary>
+        [Newtonsoft.Json.JsonProperty("password", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Password { get; set; }
+    
+        /// <summary>Название приложения, через которое клиент входит на сервер.</summary>
+        [Newtonsoft.Json.JsonProperty("application", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Application { get; set; }
+    
+    
+    }
+    
+    /// <summary>Ответ на запрос авторизации через WEB API.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class LoginResponseParameters 
+    {
+        /// <summary>Токен для выполнения запросов.</summary>
+        [Newtonsoft.Json.JsonProperty("token", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Token { get; set; }
+    
+        /// <summary>Дата истечения токена.</summary>
+        [Newtonsoft.Json.JsonProperty("tokenExpiration", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset TokenExpiration { get; set; }
+    
+    
+    }
+    
+    /// <summary>Запрос аутентификации на сервере.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class AuthenticateRequestParameters 
+    {
+        /// <summary>Название приложения, через которое клиент входит на сервер.</summary>
+        [Newtonsoft.Json.JsonProperty("application", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Application { get; set; }
+    
+    
+    }
+    
+    /// <summary>Определяет режим проверки доступа к точке учета.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum MeasurePointCheckAccessMode
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"SystemType")]
+        SystemType = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Explicit")]
+        Explicit = 1,
+    
+    }
+    
+    /// <summary>Стартовая страница, открываемая при входе в систему.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum StartPage
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"None")]
+        None = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"NodeList")]
+        NodeList = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"MeasurePointList")]
+        MeasurePointList = 2,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Map")]
+        Map = 3,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"TenantOffice")]
+        TenantOffice = 4,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"SummaryCurrentsMonitor")]
+        SummaryCurrentsMonitor = 5,
+    
+    }
+    
+    /// <summary>Диапазон IP-адресов, с которых разрешено/запрещено работать учетной записи.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class AccountIpAddress 
+    {
+        /// <summary>Идентификатор учетной записи.</summary>
+        [Newtonsoft.Json.JsonProperty("accountId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int AccountId { get; set; }
+    
+        /// <summary>Начальный Ip-адрес диапазона.</summary>
+        [Newtonsoft.Json.JsonProperty("startIP", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string StartIP { get; set; }
+    
+        /// <summary>Конечный IP-адрес диапазона.</summary>
+        [Newtonsoft.Json.JsonProperty("endIP", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EndIP { get; set; }
+    
+    
+    }
+    
+    /// <summary>Режим работы центра печати отчетов.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum ReportPrintCenterMode
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"ViewPrepared")]
+        ViewPrepared = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"CreateNew")]
+        CreateNew = 1,
+    
+    }
+    
+    /// <summary>Режимы аутентификации, разрешённые для учётной записи.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum AccountAuthenticationMode
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"None")]
+        None = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Basic")]
+        Basic = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Windows")]
+        Windows = 2,
+    
+    }
+    
+    /// <summary>Учетная запись</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class Account 
+    {
+        /// <summary>Идентификатор учётной записи в системе безопасности.</summary>
+        [Newtonsoft.Json.JsonProperty("trusteeId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int TrusteeId { get; set; }
+    
+        /// <summary>Имя входа учетной записи</summary>
+        [Newtonsoft.Json.JsonProperty("login", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Login { get; set; }
+    
+        /// <summary>Флаг блокировки учетной записи</summary>
+        [Newtonsoft.Json.JsonProperty("isDisabled", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsDisabled { get; set; }
+    
+        /// <summary>Запретить смену пароля пользователем.</summary>
+        [Newtonsoft.Json.JsonProperty("disablePasswordChange", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool DisablePasswordChange { get; set; }
+    
+        /// <summary>Признак того, что учетная запись входит в системную группу Администраторы.</summary>
+        [Newtonsoft.Json.JsonProperty("isAdmin", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsAdmin { get; set; }
+    
+        /// <summary>Учетная запись имеет доступ ко всем объектам учета и жилым домам.</summary>
+        [Newtonsoft.Json.JsonProperty("hasAllNodeAccess", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool HasAllNodeAccess { get; set; }
+    
+        /// <summary>Режим проверки доступа к точкам учета.</summary>
+        [Newtonsoft.Json.JsonProperty("measurePointCheckAccessMode", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public MeasurePointCheckAccessMode MeasurePointCheckAccessMode { get; set; }
+    
+        /// <summary>Таймаут неактивности сеансов работы, открытых учетной записью</summary>
+        [Newtonsoft.Json.JsonProperty("sessionTimeout", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int SessionTimeout { get; set; }
+    
+        /// <summary>Максимальное количество одновременных сеансов работы под учетной записью.
+        /// При превышении этого количество каждый новый сеанс автоматически закрывает самый старый сеанс.</summary>
+        [Newtonsoft.Json.JsonProperty("maxSessionCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.Obsolete]
+        public int MaxSessionCount { get; set; }
+    
+        /// <summary>Номер мобильного телефона.</summary>
+        [Newtonsoft.Json.JsonProperty("mobilePhone", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string MobilePhone { get; set; }
+    
+        /// <summary>Адрес электронной почты.</summary>
+        [Newtonsoft.Json.JsonProperty("eMail", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EMail { get; set; }
+    
+        /// <summary>Шлюз e-mail для отправки SMS.</summary>
+        [Newtonsoft.Json.JsonProperty("smsEMail", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string SmsEMail { get; set; }
+    
+        /// <summary>Отправлять SMS-сообщения через GSM-модем вместо e-mail шлюза.</summary>
+        [Newtonsoft.Json.JsonProperty("sendSmsViaModem", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool SendSmsViaModem { get; set; }
+    
+        /// <summary>Начало временного интервала, в течение которого можно отправлять SMS-сообщения (в минутах).</summary>
+        [Newtonsoft.Json.JsonProperty("notifyStartTime", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int NotifyStartTime { get; set; }
+    
+        /// <summary>Окончание временного интервала, в течение которого можно отправлять SMS-сообщения (в минутах).</summary>
+        [Newtonsoft.Json.JsonProperty("notifyEndTime", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int NotifyEndTime { get; set; }
+    
+        /// <summary>Использовать интервал отправки SMS и для EMail тоже.</summary>
+        [Newtonsoft.Json.JsonProperty("useSendIntervalForEmail", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool UseSendIntervalForEmail { get; set; }
+    
+        /// <summary>Определяет, разрешены ли учетной записи все отчеты.</summary>
+        [Newtonsoft.Json.JsonProperty("allowAllReports", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool AllowAllReports { get; set; }
+    
+        /// <summary>Определяет, разрешены ли учетной записи все мнемосхемы.</summary>
+        [Newtonsoft.Json.JsonProperty("allowAllDiagrams", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool AllowAllDiagrams { get; set; }
+    
+        /// <summary>Список инженерных систем, разрешенных учетной записи.</summary>
+        [Newtonsoft.Json.JsonProperty("allowedSystems", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public SystemType AllowedSystems { get; set; }
+    
+        /// <summary>Дата и время, по истечении которых заканчивается срок действия учетной записи</summary>
+        [Newtonsoft.Json.JsonProperty("expirationDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? ExpirationDate { get; set; }
+    
+        /// <summary>Режим использования списка IP-адресов, связанных с учетной записью.
+        /// true - разрешен вход только с IP-адресов, указанных в списке;
+        /// false - разрешен вход с любых IP-адресов, кроме указанных в списке;</summary>
+        [Newtonsoft.Json.JsonProperty("ipAddressListMode", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IpAddressListMode { get; set; }
+    
+        /// <summary>Ограничить работу личным кабинетом жильца.</summary>
+        [Newtonsoft.Json.JsonProperty("tenantOfficeOnly", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool TenantOfficeOnly { get; set; }
+    
+        /// <summary>Стартовая страница, открываемая при входе в систему.</summary>
+        [Newtonsoft.Json.JsonProperty("startPage", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public StartPage StartPage { get; set; }
+    
+        /// <summary>Список диапазонов IP-адресов, с которых разрешено/запрещено работать учетной записи.</summary>
+        [Newtonsoft.Json.JsonProperty("ipList", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<AccountIpAddress> IpList { get; set; }
+    
+        /// <summary>Дата и время установки пароля.</summary>
+        [Newtonsoft.Json.JsonProperty("passwordSetDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset PasswordSetDate { get; set; }
+    
+        /// <summary>Дата и время установки блокировки.</summary>
+        [Newtonsoft.Json.JsonProperty("disablingDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? DisablingDate { get; set; }
+    
+        /// <summary>Дата и время последнего входа учетной записи.</summary>
+        [Newtonsoft.Json.JsonProperty("lastLoginDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? LastLoginDate { get; set; }
+    
+        /// <summary>Режим работы центра печати отчетов.</summary>
+        [Newtonsoft.Json.JsonProperty("reportCenterFormMode", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ReportPrintCenterMode ReportCenterFormMode { get; set; }
+    
+        /// <summary>Разрешённые для учётной записи режимы аутентификации.</summary>
+        [Newtonsoft.Json.JsonProperty("authenticationModes", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public AccountAuthenticationMode AuthenticationModes { get; set; }
+    
+        /// <summary>Идентификатор безопасности учётной записи Windows,
+        /// которая сопоставлена с этой учётной записью ЛЭРС УЧЁТ.</summary>
+        [Newtonsoft.Json.JsonProperty("windowsSid", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string WindowsSid { get; set; }
+    
+        /// <summary>Отмечает запрещён ли вход данной учётной записи.</summary>
+        [Newtonsoft.Json.JsonProperty("loginNotAllowed", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool LoginNotAllowed { get; set; }
+    
+        /// <summary>Версия токена учётной записи.</summary>
+        [Newtonsoft.Json.JsonProperty("tokenVersion", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int TokenVersion { get; set; }
+    
+        /// <summary>Идентификатор учетной записи.</summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Id { get; set; }
+    
+        /// <summary>Отображаемое имя учетной записи.</summary>
+        [Newtonsoft.Json.JsonProperty("displayName", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string DisplayName { get; set; }
+    
+        /// <summary>Описание учетной записи.</summary>
+        [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Description { get; set; }
+    
+        /// <summary>Признак системной учетной записи.</summary>
+        [Newtonsoft.Json.JsonProperty("isSystem", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsSystem { get; set; }
+    
+        /// <summary>Идентификатор домена учётной записи.</summary>
+        [Newtonsoft.Json.JsonProperty("divisionId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? DivisionId { get; set; }
+    
+    
+    }
+    
+    /// <summary>Права доступа, которыми может обладать учетная запись или группа учетных записей.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum AccessRight
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"None")]
+        None = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditNode")]
+        EditNode = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditSystemParameters")]
+        EditSystemParameters = 2,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ViewData")]
+        ViewData = 3,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"PrintReport")]
+        PrintReport = 4,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditSupplier")]
+        EditSupplier = 5,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ViewDeviceConfig")]
+        ViewDeviceConfig = 6,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"TenantOffice")]
+        TenantOffice = 7,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditReport")]
+        EditReport = 8,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Activation")]
+        Activation = 9,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ViewDeviceEvents")]
+        ViewDeviceEvents = 10,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ManualInputCounterTotals")]
+        ManualInputCounterTotals = 11,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditOutdoorTemperature")]
+        EditOutdoorTemperature = 12,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditEquipmentModel")]
+        EditEquipmentModel = 13,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditRoom")]
+        EditRoom = 14,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ContractAnalysis")]
+        ContractAnalysis = 15,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditReportGeneratingTask")]
+        EditReportGeneratingTask = 16,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"TemperatureChart")]
+        TemperatureChart = 17,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"HouseSummary")]
+        HouseSummary = 18,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"DisconnectGprsController")]
+        DisconnectGprsController = 19,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"HouseBalance")]
+        HouseBalance = 20,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditEquipment")]
+        EditEquipment = 21,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"BrowseNonPublicNodeFile")]
+        BrowseNonPublicNodeFile = 22,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ExportToXml80020")]
+        ExportToXml80020 = 23,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditPollPort")]
+        EditPollPort = 24,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditServiceman")]
+        EditServiceman = 25,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"SaveData")]
+        SaveData = 26,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditInspector")]
+        EditInspector = 27,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditAnnouncement")]
+        EditAnnouncement = 28,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ViewGsmStatistics")]
+        ViewGsmStatistics = 29,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ViewControllersStatistics")]
+        ViewControllersStatistics = 30,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"CallGprsController")]
+        CallGprsController = 31,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditBalanceGroup")]
+        EditBalanceGroup = 32,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditNodeJob")]
+        EditNodeJob = 33,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditAccount")]
+        EditAccount = 34,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ForceStopPoll")]
+        ForceStopPoll = 35,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ViewPreparedReport")]
+        ViewPreparedReport = 36,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"PollCurrents")]
+        PollCurrents = 37,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditOwnNotificationSettings")]
+        EditOwnNotificationSettings = 38,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ControlMessageQueue")]
+        ControlMessageQueue = 39,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditTerritory")]
+        EditTerritory = 40,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditNodeJobResolution")]
+        EditNodeJobResolution = 41,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"AllowAnyPollPort")]
+        AllowAnyPollPort = 42,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditMeasurePoint")]
+        EditMeasurePoint = 43,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"CloseIncident")]
+        CloseIncident = 44,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"DeleteIncident")]
+        DeleteIncident = 45,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"MoveMeasurePoint")]
+        MoveMeasurePoint = 46,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditNodeGroup")]
+        EditNodeGroup = 47,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditServiceCompany")]
+        EditServiceCompany = 48,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditCustomer")]
+        EditCustomer = 49,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditMap")]
+        EditMap = 50,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditPlugins")]
+        EditPlugins = 51,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditReportTemplate")]
+        EditReportTemplate = 52,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"SendMessage")]
+        SendMessage = 53,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"BackupDatabase")]
+        BackupDatabase = 54,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"InstallSystemUpdate")]
+        InstallSystemUpdate = 55,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"GetUserSessionList")]
+        GetUserSessionList = 56,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"CloseUserSession")]
+        CloseUserSession = 57,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ViewSystemLog")]
+        ViewSystemLog = 58,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ViewAccountLog")]
+        ViewAccountLog = 59,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ViewUserSessionLog")]
+        ViewUserSessionLog = 60,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ViewMessageLog")]
+        ViewMessageLog = 61,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ViewLogFiles")]
+        ViewLogFiles = 62,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"PollQueueControl")]
+        PollQueueControl = 63,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ViewPollSession")]
+        ViewPollSession = 64,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ManualPoll")]
+        ManualPoll = 65,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"RemoteConsole")]
+        RemoteConsole = 66,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ViewIncident")]
+        ViewIncident = 67,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ViewMap")]
+        ViewMap = 68,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"DeletePreparedReport")]
+        DeletePreparedReport = 69,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EditServicingStatuses")]
+        EditServicingStatuses = 70,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"DeleteNode")]
+        DeleteNode = 71,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"DeleteMeasurePoint")]
+        DeleteMeasurePoint = 72,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"DeleteRoom")]
+        DeleteRoom = 73,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"DeleteEquipment")]
+        DeleteEquipment = 74,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ViewAccountNodeJob")]
+        ViewAccountNodeJob = 75,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"CreateIncident")]
+        CreateIncident = 76,
+    
+    }
+    
+    /// <summary>Группа учетных записей.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class AccountGroup 
+    {
+        /// <summary>Идентификатор.</summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Id { get; set; }
+    
+        /// <summary>Идентификатор системы безопасности.</summary>
+        [Newtonsoft.Json.JsonProperty("trusteeId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int TrusteeId { get; set; }
+    
+        /// <summary>Указывает что для группы учётных записей разрешены все мнемосхемы.</summary>
+        [Newtonsoft.Json.JsonProperty("allowAllDiagrams", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool AllowAllDiagrams { get; set; }
+    
+        /// <summary>Указывает что для группы учётных записей разрешены все отчёты.</summary>
+        [Newtonsoft.Json.JsonProperty("allowAllReports", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool AllowAllReports { get; set; }
+    
+        /// <summary>Наименование.</summary>
+        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(100)]
+        public string Title { get; set; }
+    
+        /// <summary>Признак того, что группа является системной.</summary>
+        [Newtonsoft.Json.JsonProperty("isSystem", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsSystem { get; set; }
+    
+        /// <summary>Идентификатор подразделения, в которое входит учётная запись.</summary>
+        [Newtonsoft.Json.JsonProperty("divisionId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? DivisionId { get; set; }
+    
+    
+    }
+    
+    /// <summary>Информация о текущем вошедшем пользователе.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class CurrentLoginInfo 
+    {
+        /// <summary>Параметры текущей учётной записи.</summary>
+        [Newtonsoft.Json.JsonProperty("account", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Account Account { get; set; }
+    
+        /// <summary>Действующие разрешения для текущей учетной записи.</summary>
+        [Newtonsoft.Json.JsonProperty("permissions", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public System.Collections.Generic.ICollection<AccessRight> Permissions { get; set; }
+    
+        /// <summary>Группы учетных записей, в которые входит текущая учетная запись.</summary>
+        [Newtonsoft.Json.JsonProperty("accountGroups", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<AccountGroup> AccountGroups { get; set; }
+    
+    
+    }
+    
+    /// <summary>Вид данных по электроэнергии.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum ElectricDataKind
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"Raw")]
+        Raw = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Real")]
+        Real = 1,
+    
+    }
+    
+    /// <summary>Типы единиц измерения в которых можно запросить данные по точке учёта.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum MeasurePointDataUnitsRequestType
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"SystemUnits")]
+        SystemUnits = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ConfiguredUnits")]
+        ConfiguredUnits = 1,
+    
+    }
+    
+    /// <summary>Атрибуты записи с потреблением.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum ConsumptionRecordAttributes
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"None")]
+        None = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ExternalData")]
+        ExternalData = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"IncompleteData")]
+        IncompleteData = 2,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"CalculatedByDeviceTotals")]
+        CalculatedByDeviceTotals = 3,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"MissingInDevice")]
+        MissingInDevice = 4,
+    
+    }
+    
+    /// <summary>Значение параметра</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class DataParameterValue 
+    {
+        /// <summary>Параметр</summary>
+        [Newtonsoft.Json.JsonProperty("dataParameter", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public DataParameter DataParameter { get; set; }
+    
+        /// <summary>Значение</summary>
+        [Newtonsoft.Json.JsonProperty("value", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double Value { get; set; }
+    
+        /// <summary>Флаг недостоверного значения</summary>
+        [Newtonsoft.Json.JsonProperty("isBad", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsBad { get; set; }
+    
+        /// <summary>Флаг рассчитанного значения</summary>
+        [Newtonsoft.Json.JsonProperty("isCalc", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsCalc { get; set; }
+    
+        /// <summary>Флаг интерполированного значения</summary>
+        [Newtonsoft.Json.JsonProperty("isInterpolated", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsInterpolated { get; set; }
+    
+        /// <summary>Флаг сброшенного интегратора</summary>
+        [Newtonsoft.Json.JsonProperty("isReset", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsReset { get; set; }
+    
+    
+    }
+    
+    /// <summary>Запись с данными о потреблении.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class MeasurePointDataConsumptionRecord 
+    {
+        /// <summary>Тип ресурса к которому относится запись с данными.</summary>
+        [Newtonsoft.Json.JsonProperty("resourceKind", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ResourceKind ResourceKind { get; set; }
+    
+        /// <summary>Возвращает значение, определяющее, является ли запись пустой (отсутствующей).</summary>
+        [Newtonsoft.Json.JsonProperty("isEmpty", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsEmpty { get; set; }
+    
+        /// <summary>Дата и время данных потребления.</summary>
+        [Newtonsoft.Json.JsonProperty("dateTime", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset DateTime { get; set; }
+    
+        /// <summary>Атрибуты архивной записи.</summary>
+        [Newtonsoft.Json.JsonProperty("attributes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public System.Collections.Generic.ICollection<ConsumptionRecordAttributes> Attributes { get; set; }
+    
+        /// <summary>Массив значений параметров</summary>
+        [Newtonsoft.Json.JsonProperty("values", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<DataParameterValue> Values { get; set; }
+    
+    
+    }
+    
+    /// <summary>Категория параметра данных.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum DataParameterCategory
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"None")]
+        None = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Temperature")]
+        Temperature = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Pressure")]
+        Pressure = 2,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Mass")]
+        Mass = 3,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Volume")]
+        Volume = 4,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Heat")]
+        Heat = 5,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Time")]
+        Time = 6,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ActiveElectricalEnergy")]
+        ActiveElectricalEnergy = 7,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ReactiveElectricalEnergy")]
+        ReactiveElectricalEnergy = 8,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ActiveElectricPower")]
+        ActiveElectricPower = 9,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ReactiveElectricPower")]
+        ReactiveElectricPower = 10,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ApparentElectricPower")]
+        ApparentElectricPower = 11,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Voltage")]
+        Voltage = 12,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ElectricCurrent")]
+        ElectricCurrent = 13,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"PhaseAngle")]
+        PhaseAngle = 14,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"PowerFactor")]
+        PowerFactor = 15,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Frequency")]
+        Frequency = 16,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"WaterLevel")]
+        WaterLevel = 17,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"PressureDrop")]
+        PressureDrop = 18,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ValvePercent")]
+        ValvePercent = 19,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Coefficient")]
+        Coefficient = 20,
+    
+    }
+    
+    /// <summary>Единицы измерения</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class DataParametersUnitPair 
+    {
+        /// <summary>Категория параметра данных</summary>
+        [Newtonsoft.Json.JsonProperty("dataParameterCategory", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public DataParameterCategory DataParameterCategory { get; set; }
+    
+        /// <summary>Единицы измерения</summary>
+        [Newtonsoft.Json.JsonProperty("unit", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public Unit Unit { get; set; }
+    
+    
+    }
+    
+    /// <summary>Ответ на получение записей с потреблением</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class GetMeasurePointConsumptionResponse 
+    {
+        /// <summary>Тип давления</summary>
+        [Newtonsoft.Json.JsonProperty("pressureType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public PressureType PressureType { get; set; }
+    
+        /// <summary>Записи с месячным потреблением.</summary>
+        [Newtonsoft.Json.JsonProperty("monthConsumption", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<MeasurePointDataConsumptionRecord> MonthConsumption { get; set; }
+    
+        /// <summary>Записи с суточным потреблением.</summary>
+        [Newtonsoft.Json.JsonProperty("dayConsumption", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<MeasurePointDataConsumptionRecord> DayConsumption { get; set; }
+    
+        /// <summary>Записи с часовым потреблением.</summary>
+        [Newtonsoft.Json.JsonProperty("hourConsumption", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<MeasurePointDataConsumptionRecord> HourConsumption { get; set; }
+    
+        /// <summary>Записи с текущим потреблением.</summary>
+        [Newtonsoft.Json.JsonProperty("currentConsumption", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<MeasurePointDataConsumptionRecord> CurrentConsumption { get; set; }
+    
+        /// <summary>Единицы измерения для категории параметров.</summary>
+        [Newtonsoft.Json.JsonProperty("dataParametersUnit", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<DataParametersUnitPair> DataParametersUnit { get; set; }
+    
+    
+    }
+    
+    /// <summary>Параметры сохранения потребления.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class SaveConsumptionParameters 
+    {
+        /// <summary>Тип данных потребления.</summary>
+        [Newtonsoft.Json.JsonProperty("dataType", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public DeviceDataType DataType { get; set; }
+    
+        /// <summary>Тип сохраняемого давления по воде.</summary>
+        [Newtonsoft.Json.JsonProperty("pressureType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public PressureType PressureType { get; set; }
+    
+        /// <summary>Потребление для сохранения.</summary>
+        [Newtonsoft.Json.JsonProperty("consumption", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<MeasurePointDataConsumptionRecord> Consumption { get; set; } = new System.Collections.ObjectModel.Collection<MeasurePointDataConsumptionRecord>();
+    
+    
+    }
+    
+    /// <summary>Единица измерения для параметра.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class UnitOfMeasurementObject 
+    {
+        /// <summary>Тип измеряемого параметра.</summary>
+        [Newtonsoft.Json.JsonProperty("category", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public DataParameterCategory Category { get; set; }
+    
+        /// <summary>Единица измерения.</summary>
+        [Newtonsoft.Json.JsonProperty("unit", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public Unit Unit { get; set; }
+    
+    
+    }
+    
+    /// <summary>Параметры запроса сохранения потребления по точке учёта.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class SaveConsumptionRequestParameters 
+    {
+        /// <summary>Данные потребления.</summary>
+        [Newtonsoft.Json.JsonProperty("data", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        public SaveConsumptionParameters Data { get; set; } = new SaveConsumptionParameters();
+    
+        /// <summary>Единицы измерения, в которых передаются величины для сохранения (необязательный параметр).</summary>
+        [Newtonsoft.Json.JsonProperty("unitsOfMeasurement", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<UnitOfMeasurementObject> UnitsOfMeasurement { get; set; }
+    
+    
+    }
+    
+    /// <summary>Атрибуты записи с интеграторами.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum TotalsRecordAttributes
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"None")]
+        None = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"HourTotals")]
+        HourTotals = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"DayTotals")]
+        DayTotals = 2,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"MonthTotals")]
+        MonthTotals = 3,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"CurrentTotals")]
+        CurrentTotals = 4,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ExternalData")]
+        ExternalData = 5,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"TenantInput")]
+        TenantInput = 6,
+    
+    }
+    
+    /// <summary>Запись с данными об показаниях интеграторов.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class MeasurePointDataTotalsRecord 
+    {
+        /// <summary>Тип ресурса к которому относится запись с данными.</summary>
+        [Newtonsoft.Json.JsonProperty("resourceKind", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ResourceKind ResourceKind { get; set; }
+    
+        /// <summary>Возвращает значение, определяющее, является ли запись пустой (отсутствующей).</summary>
+        [Newtonsoft.Json.JsonProperty("isEmpty", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsEmpty { get; set; }
+    
+        /// <summary>Дата и время.</summary>
+        [Newtonsoft.Json.JsonProperty("dateTime", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset DateTime { get; set; }
+    
+        /// <summary>Список атрибутов записи.</summary>
+        [Newtonsoft.Json.JsonProperty("attributes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public System.Collections.Generic.ICollection<TotalsRecordAttributes> Attributes { get; set; }
+    
+        /// <summary>Массив значений параметров</summary>
+        [Newtonsoft.Json.JsonProperty("values", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<DataParameterValue> Values { get; set; }
+    
+    
+    }
+    
+    /// <summary>Параметры запроса на сохранение данных по точке учета.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class SaveDataRequestParams 
+    {
+        /// <summary>Потребление.</summary>
+        [Newtonsoft.Json.JsonProperty("consumption", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        public SaveConsumptionParameters Consumption { get; set; } = new SaveConsumptionParameters();
+    
+        /// <summary>Интеграторы.</summary>
+        [Newtonsoft.Json.JsonProperty("totals", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<MeasurePointDataTotalsRecord> Totals { get; set; } = new System.Collections.ObjectModel.Collection<MeasurePointDataTotalsRecord>();
+    
+        /// <summary>Единицы измерения, в которых передаются величины для сохранения (необязательный параметр).</summary>
+        [Newtonsoft.Json.JsonProperty("unitsOfMeasurement", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<UnitOfMeasurementObject> UnitsOfMeasurement { get; set; }
+    
+    
+    }
+    
+    /// <summary>Тип архива, из которого была считана запись архива событий</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum DeviceEventArchiveType
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"Common")]
+        Common = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"HeatLeadIn")]
+        HeatLeadIn = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Channel")]
+        Channel = 2,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"DiscreteInput")]
+        DiscreteInput = 3,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"DiscreteOutput")]
+        DiscreteOutput = 4,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ModeChange")]
+        ModeChange = 5,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"UserActions")]
+        UserActions = 6,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"PowerInterruptionPeriods")]
+        PowerInterruptionPeriods = 7,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ConfigChanges")]
+        ConfigChanges = 8,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Diagnostics")]
+        Diagnostics = 9,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Incidents")]
+        Incidents = 10,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"MonthPowerInterruptions")]
+        MonthPowerInterruptions = 11,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"DayPowerInterruptions")]
+        DayPowerInterruptions = 12,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"DiagnosticNonAffectingRecording")]
+        DiagnosticNonAffectingRecording = 13,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"IncidentsAffectingRecording")]
+        IncidentsAffectingRecording = 14,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"DaySummarizedIncidents")]
+        DaySummarizedIncidents = 15,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"HourSummarizedIncidents")]
+        HourSummarizedIncidents = 16,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"CommonEvents")]
+        CommonEvents = 17,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"IndividualEvents")]
+        IndividualEvents = 18,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"PrevAndCurrMonthIncidents")]
+        PrevAndCurrMonthIncidents = 19,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"PeripherialErrors")]
+        PeripherialErrors = 20,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Failures")]
+        Failures = 21,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Errors")]
+        Errors = 22,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Warnings")]
+        Warnings = 23,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Messages")]
+        Messages = 24,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"BasicLog")]
+        BasicLog = 25,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"SystemLog")]
+        SystemLog = 26,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"HotWaterLog")]
+        HotWaterLog = 27,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"System1")]
+        System1 = 28,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"System2")]
+        System2 = 29,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"System3")]
+        System3 = 30,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Status5")]
+        Status5 = 31,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Status6")]
+        Status6 = 32,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"StatusSys")]
+        StatusSys = 33,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"HardwareIncidents")]
+        HardwareIncidents = 34,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"HardwareEvents")]
+        HardwareEvents = 35,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"HsEvents")]
+        HsEvents = 36,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"HmEvents")]
+        HmEvents = 37,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"HeatSystemEvents")]
+        HeatSystemEvents = 38,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"AdditionalIncidents")]
+        AdditionalIncidents = 39,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"SensorFailures")]
+        SensorFailures = 40,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"HeatSystemIncidents")]
+        HeatSystemIncidents = 41,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"HardwareFailures")]
+        HardwareFailures = 42,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"HeatSystemStatus")]
+        HeatSystemStatus = 43,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Status2")]
+        Status2 = 44,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Status4")]
+        Status4 = 45,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Status7")]
+        Status7 = 46,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"OnOff")]
+        OnOff = 47,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"OpenClose")]
+        OpenClose = 48,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Param")]
+        Param = 49,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"PulseInput")]
+        PulseInput = 50,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Disconnect")]
+        Disconnect = 51,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Firmware")]
+        Firmware = 52,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"PowerQualityBegin")]
+        PowerQualityBegin = 53,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"PowerQualityEnd")]
+        PowerQualityEnd = 54,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Communication")]
+        Communication = 55,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Reset")]
+        Reset = 56,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Security")]
+        Security = 57,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"PowerQualityFailure")]
+        PowerQualityFailure = 58,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"MonthSummarizedIncidents")]
+        MonthSummarizedIncidents = 59,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"TimeSync")]
+        TimeSync = 60,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"InvalidPassHandling")]
+        InvalidPassHandling = 61,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"DiagnosticsBuiltClock")]
+        DiagnosticsBuiltClock = 62,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"WriteDateTime")]
+        WriteDateTime = 63,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"TariffScheduleChange")]
+        TariffScheduleChange = 64,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ChangeClockCorrection")]
+        ChangeClockCorrection = 65,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ChangingModeOrDate")]
+        ChangingModeOrDate = 66,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ZeroingTariffDrives")]
+        ZeroingTariffDrives = 67,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ChangeTechnologicalParam")]
+        ChangeTechnologicalParam = 68,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"PowerQuality")]
+        PowerQuality = 69,
+    
+    }
+    
+    /// <summary>Стандартные типы событий устройства.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum GeneralEventType
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"None")]
+        None = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"FlowUnderrun")]
+        FlowUnderrun = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"FlowOverrun")]
+        FlowOverrun = 2,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"TempDiffLow")]
+        TempDiffLow = 3,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"FunctionalFailure")]
+        FunctionalFailure = 4,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"FlowDirectionChange")]
+        FlowDirectionChange = 5,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"NoPower")]
+        NoPower = 6,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"NoFlow")]
+        NoFlow = 7,
+    
+    }
+    
+    /// <summary>Запись архива ошибок по точке учёта.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class MeasurePointDeviceErrorRecord 
+    {
+        /// <summary>Тип архива.</summary>
+        [Newtonsoft.Json.JsonProperty("archiveType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public DeviceEventArchiveType ArchiveType { get; set; }
+    
+        /// <summary>Номер канала.</summary>
+        [Newtonsoft.Json.JsonProperty("channelNumber", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int ChannelNumber { get; set; }
+    
+        /// <summary>Дата и время.</summary>
+        [Newtonsoft.Json.JsonProperty("dateTime", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset DateTime { get; set; }
+    
+        /// <summary>Код события.</summary>
+        [Newtonsoft.Json.JsonProperty("eventCode", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int EventCode { get; set; }
+    
+        /// <summary>Описание.</summary>
+        [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Description { get; set; }
+    
+        /// <summary>Длительность (в секундах).</summary>
+        [Newtonsoft.Json.JsonProperty("duration", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Duration { get; set; }
+    
+        /// <summary>Стандартный тип события устройства.</summary>
+        [Newtonsoft.Json.JsonProperty("generalEventType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public GeneralEventType GeneralEventType { get; set; }
+    
+    
+    }
+    
+    /// <summary>Ответ на запрос архива ошибок устройства по точке учета.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class MeasurePointDeviceErrorsResponseParameters 
+    {
+        /// <summary>Месячный архив.</summary>
+        [Newtonsoft.Json.JsonProperty("monthArchive", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<MeasurePointDeviceErrorRecord> MonthArchive { get; set; }
+    
+        /// <summary>Суточный архив.</summary>
+        [Newtonsoft.Json.JsonProperty("dayArchive", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<MeasurePointDeviceErrorRecord> DayArchive { get; set; }
+    
+        /// <summary>Часовой архив.</summary>
+        [Newtonsoft.Json.JsonProperty("hourArchive", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<MeasurePointDeviceErrorRecord> HourArchive { get; set; }
+    
+    
+    }
+    
+    /// <summary>Параметры ответа на запрос списка точек учета.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class GetMeasurePointListResponseParameters 
+    {
+        /// <summary>Список точек учета.</summary>
+        [Newtonsoft.Json.JsonProperty("measurePoints", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<MeasurePoint> MeasurePoints { get; set; }
+    
+        /// <summary>Список оборудования на точках учета.</summary>
+        [Newtonsoft.Json.JsonProperty("equipment", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<Equipment> Equipment { get; set; }
+    
+        /// <summary>Список моделей оборудования.</summary>
+        [Newtonsoft.Json.JsonProperty("equipmentModels", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<EquipmentModel> EquipmentModels { get; set; }
+    
     
     }
     
@@ -7844,6 +10009,12 @@ namespace Lers.Api
         [System.Runtime.Serialization.EnumMember(Value = @"Multical603")]
         Multical603 = 376,
     
+        [System.Runtime.Serialization.EnumMember(Value = @"Spt940")]
+        Spt940 = 377,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Akron01Rs485")]
+        Akron01Rs485 = 378,
+    
     }
     
     /// <summary>Вариант выбора единиц измерения при формировании отчета.</summary>
@@ -7906,11 +10077,11 @@ namespace Lers.Api
         public byte[] DataSourceAsXml { get; set; }
     
         /// <summary>Имя таблицы, из которой будут браться данные для тела отчета (секции Detail).</summary>
-        [Newtonsoft.Json.JsonProperty("dataMember", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("dataMember", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string DataMember { get; set; }
     
         /// <summary>Версия.</summary>
-        [Newtonsoft.Json.JsonProperty("version", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("version", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Version { get; set; }
     
         /// <summary>Количество точек учета в системе теплоснабжения.</summary>
@@ -8335,6 +10506,9 @@ namespace Lers.Api
         [System.Runtime.Serialization.EnumMember(Value = @"El2100")]
         El2100 = 54,
     
+        [System.Runtime.Serialization.EnumMember(Value = @"LersEthernet2")]
+        LersEthernet2 = 55,
+    
     }
     
     /// <summary>Протокол для каналов связи Интернет.</summary>
@@ -8374,7 +10548,9 @@ namespace Lers.Api
         public int PollServiceId { get; set; }
     
         /// <summary>Наименование порта опроса.</summary>
-        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.StringLength(50, MinimumLength = 1)]
         public string Title { get; set; }
     
         /// <summary>Номер COM-порта.</summary>
@@ -8470,8 +10646,8 @@ namespace Lers.Api
         public DataParameter DataParameter { get; set; }
     
         /// <summary>Идентификатор исходной точки учёта.</summary>
-        [Newtonsoft.Json.JsonProperty("sourceMeasurePointId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int SourceMeasurePointId { get; set; }
+        [Newtonsoft.Json.JsonProperty("sourceMeasurePointId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? SourceMeasurePointId { get; set; }
     
     
     }
@@ -8595,62 +10771,6 @@ namespace Lers.Api
     
     }
     
-    /// <summary>Атрибуты записи с интеграторами.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public enum TotalsRecordAttributes
-    {
-        [System.Runtime.Serialization.EnumMember(Value = @"None")]
-        None = 0,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"HourTotals")]
-        HourTotals = 1,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"DayTotals")]
-        DayTotals = 2,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"MonthTotals")]
-        MonthTotals = 3,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"CurrentTotals")]
-        CurrentTotals = 4,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ExternalData")]
-        ExternalData = 5,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"TenantInput")]
-        TenantInput = 6,
-    
-    }
-    
-    /// <summary>Запись с данными об показаниях интеграторов.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class MeasurePointDataTotalsRecord 
-    {
-        /// <summary>Дата и время.</summary>
-        [Newtonsoft.Json.JsonProperty("dateTime", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTimeOffset DateTime { get; set; }
-    
-        /// <summary>Список атрибутов записи.</summary>
-        [Newtonsoft.Json.JsonProperty("attributes", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public TotalsRecordAttributes Attributes { get; set; }
-    
-        /// <summary>Тип ресурса к которому относится запись с данными.</summary>
-        [Newtonsoft.Json.JsonProperty("resourceKind", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public ResourceKind ResourceKind { get; set; }
-    
-        /// <summary>Возвращает значение, определяющее, является ли запись пустой (отсутствующей).</summary>
-        [Newtonsoft.Json.JsonProperty("isEmpty", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsEmpty { get; set; }
-    
-        /// <summary>Записи с данными о потреблении.</summary>
-        [Newtonsoft.Json.JsonProperty("dataParameters", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.ICollection<DataParameterValue> DataParameters { get; set; }
-    
-    
-    }
-    
     /// <summary>Ответ на получение записей с показаниями</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
     public partial class GetMeasurePointTotalsResponse 
@@ -8678,6 +10798,275 @@ namespace Lers.Api
         /// <summary>Единицы измерения, в которых передаются величины для сохранения (необязательный параметр).</summary>
         [Newtonsoft.Json.JsonProperty("unitsOfMeasurement", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<UnitOfMeasurementObject> UnitsOfMeasurement { get; set; }
+    
+    
+    }
+    
+    /// <summary>Представляет сущность "Группа объектов учета".</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class NodeGroup 
+    {
+        /// <summary>Уникальный идентификатор.</summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Id { get; set; }
+    
+        /// <summary>Наименование.</summary>
+        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.StringLength(75, MinimumLength = 1)]
+        public string Title { get; set; }
+    
+        /// <summary>Комментарий.</summary>
+        [Newtonsoft.Json.JsonProperty("comment", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(250)]
+        public string Comment { get; set; }
+    
+        /// <summary>Идентификатор домена, в который входит группа.</summary>
+        [Newtonsoft.Json.JsonProperty("divisionId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? DivisionId { get; set; }
+    
+        /// <summary>Признак того, что группа является иерархической.</summary>
+        [Newtonsoft.Json.JsonProperty("isTree", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsTree { get; set; }
+    
+        /// <summary>Идентификатор родителя.</summary>
+        [Newtonsoft.Json.JsonProperty("parentId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? ParentId { get; set; }
+    
+    
+    }
+    
+    /// <summary>Ответ на запрос группы объектов учёта.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class NodeGroupResponseParameters 
+    {
+        /// <summary>Параметры группы объектов.</summary>
+        [Newtonsoft.Json.JsonProperty("nodeGroup", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public NodeGroup NodeGroup { get; set; }
+    
+        /// <summary>Идентификаторы объектов учёта, входящих в группу.</summary>
+        [Newtonsoft.Json.JsonProperty("members", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<int> Members { get; set; }
+    
+    
+    }
+    
+    /// <summary>Учетная запись с ограниченной информацией.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class PublicAccount 
+    {
+        /// <summary>Идентификатор учетной записи.</summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Id { get; set; }
+    
+        /// <summary>Отображаемое имя учетной записи.</summary>
+        [Newtonsoft.Json.JsonProperty("displayName", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string DisplayName { get; set; }
+    
+        /// <summary>Описание учетной записи.</summary>
+        [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Description { get; set; }
+    
+        /// <summary>Признак системной учетной записи.</summary>
+        [Newtonsoft.Json.JsonProperty("isSystem", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsSystem { get; set; }
+    
+        /// <summary>Идентификатор домена учётной записи.</summary>
+        [Newtonsoft.Json.JsonProperty("divisionId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? DivisionId { get; set; }
+    
+    
+    }
+    
+    /// <summary>Обслуживающая организация.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class ServiceCompany 
+    {
+        /// <summary>Уникальный идентификатор.</summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Id { get; set; }
+    
+        /// <summary>Наименование.</summary>
+        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.StringLength(200, MinimumLength = 1)]
+        public string Title { get; set; }
+    
+        /// <summary>Номера телефонов.</summary>
+        [Newtonsoft.Json.JsonProperty("phone", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(200)]
+        public string Phone { get; set; }
+    
+        /// <summary>Номер лицензии.</summary>
+        [Newtonsoft.Json.JsonProperty("licenseNumber", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(100)]
+        public string LicenseNumber { get; set; }
+    
+        /// <summary>Комментарий.</summary>
+        [Newtonsoft.Json.JsonProperty("comment", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(1000)]
+        public string Comment { get; set; }
+    
+        /// <summary>Список учётных записей обслуживающих, относящихся к данной организации.</summary>
+        [Newtonsoft.Json.JsonProperty("servicemanAccountList", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<PublicAccount> ServicemanAccountList { get; set; }
+    
+    
+    }
+    
+    /// <summary>Потребитель.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class Customer 
+    {
+        /// <summary>Уникальный идентификатор.</summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Id { get; set; }
+    
+        /// <summary>Наименование.</summary>
+        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.StringLength(255, MinimumLength = 1)]
+        public string Title { get; set; }
+    
+        /// <summary>Флаг, указывает что потребитель является физическим лицом.</summary>
+        [Newtonsoft.Json.JsonProperty("isNaturalPerson", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsNaturalPerson { get; set; }
+    
+        /// <summary>ИНН.
+        /// В англоязычном мире - VAT (value added tax) identification number.</summary>
+        [Newtonsoft.Json.JsonProperty("vatId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(12)]
+        public string VatId { get; set; }
+    
+    
+    }
+    
+    /// <summary>Ресурсоснабжающая организация (РСО).</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class Supplier 
+    {
+        /// <summary>Идентификатор.</summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Id { get; set; }
+    
+        /// <summary>Наименование.</summary>
+        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.StringLength(100, MinimumLength = 1)]
+        public string Title { get; set; }
+    
+        /// <summary>Маска с типами систем, по которым ресурсоснабжающая организация может поставлять ресурсы.</summary>
+        [Newtonsoft.Json.JsonProperty("systemTypes", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public SystemType SystemTypes { get; set; }
+    
+        /// <summary>Контактная информация для связи с ресурсоснабжающей организацией.</summary>
+        [Newtonsoft.Json.JsonProperty("contacts", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(500)]
+        public string Contacts { get; set; }
+    
+        /// <summary>Комментарий.</summary>
+        [Newtonsoft.Json.JsonProperty("comment", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(1000)]
+        public string Comment { get; set; }
+    
+    
+    }
+    
+    /// <summary>Ресурсоснабжающая организация (РСО) для объекта учета.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class NodeSupplier 
+    {
+        /// <summary>Идентификатор объекта учета.</summary>
+        [Newtonsoft.Json.JsonProperty("nodeId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int NodeId { get; set; }
+    
+        /// <summary>Тип системы, для которой поставляется ресурс.</summary>
+        [Newtonsoft.Json.JsonProperty("systemType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public SystemType SystemType { get; set; }
+    
+        /// <summary>Идентификатор ресурсоснабжающей организации.</summary>
+        [Newtonsoft.Json.JsonProperty("supplierId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? SupplierId { get; set; }
+    
+        /// <summary>Номер договора на поставку ресурса.</summary>
+        [Newtonsoft.Json.JsonProperty("contractNumber", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ContractNumber { get; set; }
+    
+        /// <summary>Дата заключения договора.</summary>
+        [Newtonsoft.Json.JsonProperty("contractDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? ContractDate { get; set; }
+    
+        /// <summary>Идентификатор инспектора.</summary>
+        [Newtonsoft.Json.JsonProperty("inspectorId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? InspectorId { get; set; }
+    
+    
+    }
+    
+    /// <summary>Состояние сигнала объекта учета.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum NodeSignalingState
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
+        Unknown = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Set")]
+        Set = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Unset")]
+        Unset = 2,
+    
+    }
+    
+    /// <summary>Параметры сигнализации для объекта учета.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class NodeSignaling 
+    {
+        /// <summary>Идентификатор объекта учета.</summary>
+        [Newtonsoft.Json.JsonProperty("nodeId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int NodeId { get; set; }
+    
+        /// <summary>Уникальный идентификатор записи.</summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Id { get; set; }
+    
+        /// <summary>Наименование сигнала.</summary>
+        [Newtonsoft.Json.JsonProperty("signalTitle", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string SignalTitle { get; set; }
+    
+        /// <summary>Идентификатор контроллера, с которого считывается сигнал.</summary>
+        [Newtonsoft.Json.JsonProperty("equipmentId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int EquipmentId { get; set; }
+    
+        /// <summary>Номер сухого контакта в контроллере.</summary>
+        [Newtonsoft.Json.JsonProperty("dryContactNumber", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int DryContactNumber { get; set; }
+    
+        /// <summary>Важность нештатной ситуации, которая будет создана при установке сигнала.</summary>
+        [Newtonsoft.Json.JsonProperty("incidentImportanceSet", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public IncidentImportance IncidentImportanceSet { get; set; }
+    
+        /// <summary>Текст сообщения в нештатной ситуации, которая будет создана при установке сигнала.</summary>
+        [Newtonsoft.Json.JsonProperty("incidentMessageSet", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string IncidentMessageSet { get; set; }
+    
+        /// <summary>Важность нештатной ситуации, которая будет создана при сбросе сигнала.</summary>
+        [Newtonsoft.Json.JsonProperty("incidentImportanceUnset", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public IncidentImportance IncidentImportanceUnset { get; set; }
+    
+        /// <summary>Текст сообщения в нештатной ситуации, которая будет создана при сбросе сигнала.</summary>
+        [Newtonsoft.Json.JsonProperty("incidentMessageUnset", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string IncidentMessageUnset { get; set; }
+    
+        /// <summary>Текущее состояние сигнала.</summary>
+        [Newtonsoft.Json.JsonProperty("currentState", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public NodeSignalingState CurrentState { get; set; }
     
     
     }
@@ -8715,6 +11104,227 @@ namespace Lers.Api
         /// MonthStdTemperature[11] - Декабрь</summary>
         [Newtonsoft.Json.JsonProperty("monthStdTemperature", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<float> MonthStdTemperature { get; set; }
+    
+    
+    }
+    
+    /// <summary>Параметры ответа на запрос получения списка объектов учета.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class GetNodeListResponseParameters 
+    {
+        /// <summary>Список объектов учета.</summary>
+        [Newtonsoft.Json.JsonProperty("nodes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<Node> Nodes { get; set; }
+    
+        /// <summary>Список точек учета.</summary>
+        [Newtonsoft.Json.JsonProperty("measurePoints", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<MeasurePoint> MeasurePoints { get; set; }
+    
+        /// <summary>Список обслуживающих инженеров.</summary>
+        [Newtonsoft.Json.JsonProperty("servicemen", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<PublicAccount> Servicemen { get; set; }
+    
+        /// <summary>Массив обслуживающих организаций.</summary>
+        [Newtonsoft.Json.JsonProperty("serviceCompanies", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<ServiceCompany> ServiceCompanies { get; set; }
+    
+        /// <summary>Массив потребителей.</summary>
+        [Newtonsoft.Json.JsonProperty("customers", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<Customer> Customers { get; set; }
+    
+        /// <summary>Список РСО.</summary>
+        [Newtonsoft.Json.JsonProperty("suppliers", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<Supplier> Suppliers { get; set; }
+    
+        /// <summary>Связи РСО с объектами учета.</summary>
+        [Newtonsoft.Json.JsonProperty("nodeSuppliers", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<NodeSupplier> NodeSuppliers { get; set; }
+    
+        /// <summary>Настройки сигнализации.</summary>
+        [Newtonsoft.Json.JsonProperty("signaling", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<NodeSignaling> Signaling { get; set; }
+    
+        /// <summary>Список территорий.</summary>
+        [Newtonsoft.Json.JsonProperty("territories", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<Territory> Territories { get; set; }
+    
+    
+    }
+    
+    /// <summary>Информация о версии сервера.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class ServerInfo 
+    {
+        /// <summary>Тип сервера (ЛЭРС УЧЁТ).</summary>
+        [Newtonsoft.Json.JsonProperty("type", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Type { get; set; }
+    
+        /// <summary>Номер сборки системы ЛЭРС УЧЕТ.</summary>
+        [Newtonsoft.Json.JsonProperty("build", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Build { get; set; }
+    
+        /// <summary>Версия сервера.</summary>
+        [Newtonsoft.Json.JsonProperty("version", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Version { get; set; }
+    
+        /// <summary>Полная четырёхкомпонентная версия сервера.</summary>
+        [Newtonsoft.Json.JsonProperty("fullVersion", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string FullVersion { get; set; }
+    
+        /// <summary>Текущее время сервера.</summary>
+        [Newtonsoft.Json.JsonProperty("serverTime", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset ServerTime { get; set; }
+    
+        /// <summary>Информация об операционной системе, на которой запущен сервер.</summary>
+        [Newtonsoft.Json.JsonProperty("osDescription", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string OsDescription { get; set; }
+    
+    
+    }
+    
+    /// <summary>Тип лицензии ЛЭРС УЧЕТ.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum LersLicenseType
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"None")]
+        None = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Personal")]
+        Personal = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Commercial")]
+        Commercial = 2,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Cloud")]
+        Cloud = 3,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Corporate")]
+        Corporate = 4,
+    
+    }
+    
+    /// <summary>Информация о лицензии.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class LicenseInformation 
+    {
+        /// <summary>Тип лицензии.</summary>
+        [Newtonsoft.Json.JsonProperty("licenseType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public LersLicenseType LicenseType { get; set; }
+    
+        /// <summary>Номер лицензии XXXXXXXX-XX.</summary>
+        [Newtonsoft.Json.JsonProperty("licenseNumber", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LicenseNumber { get; set; }
+    
+        /// <summary>Количество лицензий на объекты учета.</summary>
+        [Newtonsoft.Json.JsonProperty("nodeLicenseCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int NodeLicenseCount { get; set; }
+    
+        /// <summary>Количество лицензий на поквартирный опрос.</summary>
+        [Newtonsoft.Json.JsonProperty("communalPollLicenseCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int CommunalPollLicenseCount { get; set; }
+    
+        /// <summary>Срок действия лицензии. Если имеет значение DateTime.MinValue, то лицензия бессрочная.</summary>
+        [Newtonsoft.Json.JsonProperty("expireDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset ExpireDate { get; set; }
+    
+        /// <summary>Дата истечения подписки.</summary>
+        [Newtonsoft.Json.JsonProperty("subscriptionExpireDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset SubscriptionExpireDate { get; set; }
+    
+        /// <summary>Дата активации лицензии (UTC).</summary>
+        [Newtonsoft.Json.JsonProperty("activationDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset ActivationDate { get; set; }
+    
+        /// <summary>Используется объектов учета.</summary>
+        [Newtonsoft.Json.JsonProperty("nodeUsed", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int NodeUsed { get; set; }
+    
+        /// <summary>Используется лицензий на поквартирный опрос.</summary>
+        [Newtonsoft.Json.JsonProperty("communalPollUsed", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int CommunalPollUsed { get; set; }
+    
+        /// <summary>Владелец лицензии.</summary>
+        [Newtonsoft.Json.JsonProperty("owner", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Owner { get; set; }
+    
+    
+    }
+    
+    /// <summary>Информация о часовом поясе.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class TimeZoneInformation 
+    {
+        /// <summary>Разница между временем в этом часовом поясе и временем в формате UTC (в часах).</summary>
+        [Newtonsoft.Json.JsonProperty("offset", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Offset { get; set; }
+    
+        /// <summary>Наименование часового пояса.</summary>
+        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Title { get; set; }
+    
+    
+    }
+    
+    /// <summary>Системные параметры, связанные с настройкой интерфейса пользователя.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class SystemParametersGui 
+    {
+        /// <summary>Используемые системы снабжения.</summary>
+        [Newtonsoft.Json.JsonProperty("systems", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public SystemType Systems { get; set; }
+    
+        /// <summary>Указывает что требуется включить поквартирный учёт.</summary>
+        [Newtonsoft.Json.JsonProperty("enableCommunal", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool EnableCommunal { get; set; }
+    
+        /// <summary>Указывает что разрешены праздничные темы оформления.</summary>
+        [Newtonsoft.Json.JsonProperty("enableHolidaySkin", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool EnableHolidaySkin { get; set; }
+    
+        /// <summary>Наименование веб-сайта.</summary>
+        [Newtonsoft.Json.JsonProperty("siteTitle", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string SiteTitle { get; set; }
+    
+        /// <summary>Описатель веб-сайта.</summary>
+        [Newtonsoft.Json.JsonProperty("siteDescription", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string SiteDescription { get; set; }
+    
+        /// <summary>Адрес логотипа сайта.</summary>
+        [Newtonsoft.Json.JsonProperty("logoFileName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LogoFileName { get; set; }
+    
+        /// <summary>Адрес логотипа страницы входа.</summary>
+        [Newtonsoft.Json.JsonProperty("loginLogoFileName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LoginLogoFileName { get; set; }
+    
+    
+    }
+    
+    /// <summary>Дополнительная информация приходящая в ответе на логин.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.23.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class LoginExtraInfo 
+    {
+        /// <summary>Информация о лицензии.</summary>
+        [Newtonsoft.Json.JsonProperty("license", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public LicenseInformation License { get; set; }
+    
+        /// <summary>Список всех часовых поясов.</summary>
+        [Newtonsoft.Json.JsonProperty("timeZones", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<TimeZoneInformation> TimeZones { get; set; }
+    
+        /// <summary>Разница между временем в местном часовом поясе сервера и временем в формате UTC (в часах).</summary>
+        [Newtonsoft.Json.JsonProperty("localTimeZoneOffset", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int LocalTimeZoneOffset { get; set; }
+    
+        /// <summary>Территория по умолчанию.act</summary>
+        [Newtonsoft.Json.JsonProperty("defaultTerritory", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Territory DefaultTerritory { get; set; }
+    
+        /// <summary>Системные параметры интерфейса пользователя.</summary>
+        [Newtonsoft.Json.JsonProperty("guiParameters", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public SystemParametersGui GuiParameters { get; set; }
     
     
     }
@@ -8891,6 +11501,12 @@ namespace Lers.Api
         [System.Runtime.Serialization.EnumMember(Value = @"File")]
         File = 50,
     
+        [System.Runtime.Serialization.EnumMember(Value = @"MeasurePointSchedule")]
+        MeasurePointSchedule = 51,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"TariffSchedule")]
+        TariffSchedule = 52,
+    
     }
     
     /// <summary>Тип операции, которая было произведена над сущностью.</summary>
@@ -8950,176 +11566,116 @@ namespace Lers.Api
         [System.Runtime.Serialization.EnumMember(Value = @"EditRecord")]
         EditRecord = 1,
     
-        [System.Runtime.Serialization.EnumMember(Value = @"EDIT_SYSTEM_PARAMETERS")]
-        EDIT_SYSTEM_PARAMETERS = 2,
-    
         [System.Runtime.Serialization.EnumMember(Value = @"UPDATE_POLLTASK_EXECUTION_STATE")]
-        UPDATE_POLLTASK_EXECUTION_STATE = 3,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"INS_POLL_PORT")]
-        INS_POLL_PORT = 4,
+        UPDATE_POLLTASK_EXECUTION_STATE = 2,
     
         [System.Runtime.Serialization.EnumMember(Value = @"OPEN_POLL_SESSION")]
-        OPEN_POLL_SESSION = 5,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"LOG_POLL_MESSAGE")]
-        LOG_POLL_MESSAGE = 6,
+        OPEN_POLL_SESSION = 3,
     
         [System.Runtime.Serialization.EnumMember(Value = @"CLOSE_POLL_SESSION")]
-        CLOSE_POLL_SESSION = 7,
+        CLOSE_POLL_SESSION = 4,
     
         [System.Runtime.Serialization.EnumMember(Value = @"SAVE_CURRENT_DATA")]
-        SAVE_CURRENT_DATA = 8,
+        SAVE_CURRENT_DATA = 5,
     
         [System.Runtime.Serialization.EnumMember(Value = @"ExecuteGsmModemCommand")]
-        ExecuteGsmModemCommand = 9,
+        ExecuteGsmModemCommand = 6,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"DisconnectModem")]
+        DisconnectModem = 7,
     
         [System.Runtime.Serialization.EnumMember(Value = @"SEND_DEVICE_REQUEST")]
-        SEND_DEVICE_REQUEST = 10,
+        SEND_DEVICE_REQUEST = 8,
     
         [System.Runtime.Serialization.EnumMember(Value = @"NotifyDeviceConnected")]
-        NotifyDeviceConnected = 11,
+        NotifyDeviceConnected = 9,
     
         [System.Runtime.Serialization.EnumMember(Value = @"GET_DEVICE_RESPONSE")]
-        GET_DEVICE_RESPONSE = 12,
+        GET_DEVICE_RESPONSE = 10,
     
         [System.Runtime.Serialization.EnumMember(Value = @"GetUserSessionList")]
-        GetUserSessionList = 13,
+        GetUserSessionList = 11,
     
         [System.Runtime.Serialization.EnumMember(Value = @"CloseUserSession")]
-        CloseUserSession = 14,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"DEL_POLL_PORT")]
-        DEL_POLL_PORT = 15,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"UPD_POLL_PORT")]
-        UPD_POLL_PORT = 16,
+        CloseUserSession = 12,
     
         [System.Runtime.Serialization.EnumMember(Value = @"AuthorizePollService")]
-        AuthorizePollService = 17,
+        AuthorizePollService = 13,
     
         [System.Runtime.Serialization.EnumMember(Value = @"CloseIncident")]
-        CloseIncident = 18,
+        CloseIncident = 14,
     
         [System.Runtime.Serialization.EnumMember(Value = @"UpdateSystem")]
-        UpdateSystem = 19,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"SendMessage")]
-        SendMessage = 20,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"GetSendMessageParameters")]
-        GetSendMessageParameters = 21,
+        UpdateSystem = 15,
     
         [System.Runtime.Serialization.EnumMember(Value = @"BackupDatabase")]
-        BackupDatabase = 22,
+        BackupDatabase = 16,
     
         [System.Runtime.Serialization.EnumMember(Value = @"InsertMap")]
-        InsertMap = 23,
+        InsertMap = 17,
     
         [System.Runtime.Serialization.EnumMember(Value = @"UpdateMap")]
-        UpdateMap = 24,
+        UpdateMap = 18,
     
         [System.Runtime.Serialization.EnumMember(Value = @"DeleteMap")]
-        DeleteMap = 25,
+        DeleteMap = 19,
     
         [System.Runtime.Serialization.EnumMember(Value = @"GetMap")]
-        GetMap = 26,
+        GetMap = 20,
     
         [System.Runtime.Serialization.EnumMember(Value = @"ENTITY_CHANGED")]
-        ENTITY_CHANGED = 27,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"LOCK_ENTITY")]
-        LOCK_ENTITY = 28,
+        ENTITY_CHANGED = 21,
     
         [System.Runtime.Serialization.EnumMember(Value = @"UNLOCK_ENTITY")]
-        UNLOCK_ENTITY = 29,
+        UNLOCK_ENTITY = 22,
     
         [System.Runtime.Serialization.EnumMember(Value = @"EditReportTemplate")]
-        EditReportTemplate = 30,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"GET_CONSUMPTION_NODE")]
-        GET_CONSUMPTION_NODE = 31,
+        EditReportTemplate = 23,
     
         [System.Runtime.Serialization.EnumMember(Value = @"NOTIFY_LICENSE_CHANGED")]
-        NOTIFY_LICENSE_CHANGED = 32,
+        NOTIFY_LICENSE_CHANGED = 24,
     
         [System.Runtime.Serialization.EnumMember(Value = @"GetPollPortStatus")]
-        GetPollPortStatus = 33,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"AddPlugin")]
-        AddPlugin = 34,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"DeletePlugin")]
-        DeletePlugin = 35,
+        GetPollPortStatus = 25,
     
         [System.Runtime.Serialization.EnumMember(Value = @"DEVICE_ONLINE_CHANGED")]
-        DEVICE_ONLINE_CHANGED = 36,
+        DEVICE_ONLINE_CHANGED = 26,
     
         [System.Runtime.Serialization.EnumMember(Value = @"GetUserSessionListLog")]
-        GetUserSessionListLog = 37,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"GET_LOGIN_EXTRA_INFO")]
-        GET_LOGIN_EXTRA_INFO = 38,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"NODE_BATCH_OPERATION")]
-        NODE_BATCH_OPERATION = 39,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"MEASUREPOINT_BATCH_OPERATION")]
-        MEASUREPOINT_BATCH_OPERATION = 40,
+        GetUserSessionListLog = 27,
     
         [System.Runtime.Serialization.EnumMember(Value = @"TEST_SMTP_SETTINGS")]
-        TEST_SMTP_SETTINGS = 41,
+        TEST_SMTP_SETTINGS = 28,
     
         [System.Runtime.Serialization.EnumMember(Value = @"SendTestSms")]
-        SendTestSms = 42,
+        SendTestSms = 29,
     
         [System.Runtime.Serialization.EnumMember(Value = @"GET_MEASUREPOINT_LAST_CONSUMPTION")]
-        GET_MEASUREPOINT_LAST_CONSUMPTION = 43,
+        GET_MEASUREPOINT_LAST_CONSUMPTION = 30,
     
         [System.Runtime.Serialization.EnumMember(Value = @"NOTIFY_POLL_LOG_MESSAGE")]
-        NOTIFY_POLL_LOG_MESSAGE = 44,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"DisconnectGprsController")]
-        DisconnectGprsController = 45,
+        NOTIFY_POLL_LOG_MESSAGE = 31,
     
         [System.Runtime.Serialization.EnumMember(Value = @"NOTIFICATION_CENTER_NEW_ITEM")]
-        NOTIFICATION_CENTER_NEW_ITEM = 46,
+        NOTIFICATION_CENTER_NEW_ITEM = 32,
     
         [System.Runtime.Serialization.EnumMember(Value = @"NOTIFICATION_CENTER_DEL_ITEM")]
-        NOTIFICATION_CENTER_DEL_ITEM = 47,
+        NOTIFICATION_CENTER_DEL_ITEM = 33,
     
         [System.Runtime.Serialization.EnumMember(Value = @"GetController")]
-        GetController = 48,
+        GetController = 34,
     
         [System.Runtime.Serialization.EnumMember(Value = @"NotifyControllerIsOnlineChanged")]
-        NotifyControllerIsOnlineChanged = 49,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"EditAnnouncement")]
-        EditAnnouncement = 50,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"CallGprsController")]
-        CallGprsController = 51,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"SetSummaryCurrentsMonitorParameters")]
-        SetSummaryCurrentsMonitorParameters = 52,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"GetSummaryCurrentsMonitorParameters")]
-        GetSummaryCurrentsMonitorParameters = 53,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ControlSummaryCurrentsMonitor")]
-        ControlSummaryCurrentsMonitor = 54,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ControlMessageQueue")]
-        ControlMessageQueue = 55,
+        NotifyControllerIsOnlineChanged = 35,
     
         [System.Runtime.Serialization.EnumMember(Value = @"SetMeasurePointSensors")]
-        SetMeasurePointSensors = 56,
+        SetMeasurePointSensors = 36,
     
         [System.Runtime.Serialization.EnumMember(Value = @"NotifyDeviceTimeDifference")]
-        NotifyDeviceTimeDifference = 57,
+        NotifyDeviceTimeDifference = 37,
     
-        [System.Runtime.Serialization.EnumMember(Value = @"GetReportParameterByReportId")]
-        GetReportParameterByReportId = 58,
+        [System.Runtime.Serialization.EnumMember(Value = @"ControlSummaryCurrentsMonitor")]
+        ControlSummaryCurrentsMonitor = 38,
     
     }
     

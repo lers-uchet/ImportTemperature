@@ -50,11 +50,6 @@ namespace ImportTemperatureMeteoInfo.Importers
 			}
 		}
 
-		private static bool ContainsSelector(string selectorName, string str)
-		{
-			return str.Contains($"<select name=\"{selectorName}\"");
-		}
-
 		public static Dictionary<DateTime, string> ParseTimeStamps(string raw)
 		{
 			var result = new Dictionary<DateTime, string>();

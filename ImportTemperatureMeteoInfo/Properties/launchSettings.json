@@ -2,7 +2,7 @@
   "profiles": {
     "ImportTemperatureMeteoInfo": {
       "commandName": "Project",
-      "commandLineArgs": "--incity Хабаровск --server http://localhost:52971 --missingOnly --login admin --password admin --source PogodaIKlimat"
+      "commandLineArgs": "--incity Хабаровск --server http://my.lers.ru:10000 --missingOnly --login achi --password MPA_jf^451 --source GisMeteo"
     }
   }
 }

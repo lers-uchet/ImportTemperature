@@ -13,6 +13,11 @@
 		/// <summary>
 		/// pogodaiklimat.ru
 		/// </summary>
-		PogodaIKlimat
+		PogodaIKlimat,
+
+		/// <summary>
+		/// gismeteo.ru
+		/// </summary>
+		GisMeteo
 	}
 }

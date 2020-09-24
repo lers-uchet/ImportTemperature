@@ -94,6 +94,7 @@ namespace ImportTemperatureMeteoInfo
 			{
 				ImportSource.MeteoInfo => new Importers.MemeoInfoReader(),
 				ImportSource.PogodaIKlimat => new Importers.PogodaIKlimatReader(),
+				ImportSource.GisMeteo => new Importers.GisMeteoReader(),
 				_ => throw new ArgumentOutOfRangeException(nameof(source))
 			};
 		}

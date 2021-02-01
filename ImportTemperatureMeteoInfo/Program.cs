@@ -62,7 +62,7 @@ namespace ImportTemperatureMeteoInfo
 
 				if (territory == null)
 				{
-					throw new Exception($"Территория '{territory}' не найдена на сервере.");
+					throw new Exception($"Территория '{options.DestinationTerritory}' не найдена на сервере.");
 				}
 
 				Console.WriteLine("Чтение среднесуточных температур с сайта.");

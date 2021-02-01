@@ -8,7 +8,9 @@ namespace ImportTemperatureMeteoInfo
 	{
 		private static void Main(string[] args)
 		{
-			Parser.Default.ParseArguments<ImportOptions>(args)
+			var parser = new Parser(args => args.CaseInsensitiveEnumValues = true);
+			
+			parser.ParseArguments<ImportOptions>(args)
 				.WithParsed(options =>
 				{
 					Entry(options).Wait();

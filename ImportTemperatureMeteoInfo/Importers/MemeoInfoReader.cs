@@ -35,12 +35,14 @@ namespace ImportTemperatureMeteoInfo.Importers
 		}
 
 		private static async Task<string> GetCityId(string cityName)
-		{
+		{			
 			var dataArray = await Post(HourArchiveHomeUrl, "0", "0");
 
 			var cityList = MeteoInfoParser.GetOptions(dataArray[4].ToString().Replace("[", string.Empty).Replace("]", string.Empty).Trim()).ToList();
 
-			var cityInfo = cityList.Find(x => x.Name.Contains(cityName));
+			// Ищем нормализованное имя города, чтобы не учитывать регистр.
+
+			var cityInfo = cityList.Find(x => x.Name.ToUpperInvariant().Contains(cityName.ToUpperInvariant()));
 
 			if (cityInfo == null)
 			{

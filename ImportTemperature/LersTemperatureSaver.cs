@@ -76,7 +76,7 @@ namespace ImportTemperatureMeteoInfo
 				{
 					outdoorTemp.Add(new TerritoryOutdoorTemperature
 					{
-						Date = record.Date,
+						Date = new DateTimeOffset(record.Date, TimeSpan.FromHours(territory.TimeZoneOffset)),
 						Value = record.Temperature
 					});
 				}

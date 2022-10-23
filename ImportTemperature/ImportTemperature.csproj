@@ -1,24 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net48</TargetFrameworks>
-    <AssemblySearchPaths>$(AssemblySearchPaths);{GAC}</AssemblySearchPaths>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <Description>Программа для импорта температур с сайта meteoinfo.ru в ЛЭРС УЧЁТ</Description>
     <Company>ООО "ЛЭРС УЧЁТ"</Company>
-    <Copyright>Copyright ©  2017 - 2020, ООО ЛЭРС УЧЁТ</Copyright>
+    <Copyright>Copyright © 2017 - 2022, ООО ЛЭРС УЧЁТ</Copyright>
     <Product>Система диспетчеризации ЛЭРС УЧЁТ</Product>
-    <ApplicationIcon />
     <OutputType>Exe</OutputType>
-    <StartupObject />
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <LangVersion>8</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.7.82" />    
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />    
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Net.Http" />
   </ItemGroup>
 
   <ItemGroup>

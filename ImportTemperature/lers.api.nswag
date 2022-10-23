@@ -1,9 +1,9 @@
 {
-  "runtime": "NetCore31",
+  "runtime": "Default",
   "defaultVariables": "",
   "documentGenerator": {
     "fromDocument": {
-      "url": "http://my.lers.ru/api/swagger/v1/swagger.json",
+      "url": "https://test.lers.ru/api/swagger/v1/swagger.json",
       "output": null,
       "newLineBehavior": "Auto"
     }
@@ -27,6 +27,7 @@
       "useBaseUrl": true,
       "generateBaseUrlProperty": true,
       "generateSyncMethods": false,
+      "generatePrepareRequestAndProcessResponseAsAsyncMethods": false,
       "exposeJsonSerializerSettings": false,
       "clientClassAccessModifier": "public",
       "typeAccessModifier": "public",
@@ -69,6 +70,7 @@
       "arrayBaseType": "System.Collections.ObjectModel.Collection",
       "dictionaryBaseType": "System.Collections.Generic.Dictionary",
       "classStyle": "Poco",
+      "jsonLibrary": "NewtonsoftJson",
       "generateDefaultValues": true,
       "generateDataAnnotations": true,
       "excludedTypeNames": [],

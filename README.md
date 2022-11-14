@@ -35,4 +35,4 @@
 
 ## Пример вызова:
 
-ImportTemperatureMeteoInfo.exe --incity Хабаровск --server "server" --login "login" --password "password"
+ImportTemperature.exe --incity Хабаровск --server "server" --login "login" --password "password"

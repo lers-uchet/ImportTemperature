@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImportTemperature;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -6,7 +7,7 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace ImportTemperatureMeteoInfo.Importers
+namespace ImportTemperature.Importers
 {
 	class PogodaIKlimatReader : ITempertatureReader
 	{
@@ -58,7 +59,7 @@ namespace ImportTemperatureMeteoInfo.Importers
 				throw new Exception("Не найдена страницы для города " + city);
 			}
 
-			return match.Groups["cityId"].Value;			
+			return match.Groups["cityId"].Value;
 		}
 
 		private async Task<List<TemperatureRecord>> GetTemperatures(string cityId, DateTime from, DateTime to)
@@ -74,7 +75,7 @@ namespace ImportTemperatureMeteoInfo.Importers
 			Dictionary<DateTime, float> monthTemperatures = null;
 
 			for (DateTime date = from; date <= to; date = date.AddDays(1))
-			{				
+			{
 				if (monthTemperatures == null || date.Month != month)
 				{
 					Console.WriteLine($"Загружаем страницу за {date}");

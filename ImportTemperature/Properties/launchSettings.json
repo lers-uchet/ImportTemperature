@@ -7,7 +7,7 @@
 
     "ImportTemperature.Test": {
       "commandName": "Project",
-      "commandLineArgs": "--token \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiaW1wb3J0ZXIiLCJBY2NvdW50SWQiOiIxMDIiLCJUb2tlblZlcnNpb24iOiIxIiwiQXBwbGljYXRpb24iOiLQmNC80L_QvtGA0YIg0YLQtdC80L_QtdGA0LDRgtGD0YAiLCJUb2tlbklkIjoiNjM1NSIsIm5iZiI6MTY2NjUwMDEzMSwiZXhwIjoxNzI5NzE3MjAwLCJpc3MiOiJMRVJTIEFNUiBTZXJ2ZXIiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjEwMDAwIn0.tQ9YtF7WaSFTNF4bHTMo-kn6GXDX5W46u7KmiNd3G10\" --incity Москва --server https://test.lers.ru\""
+      "commandLineArgs": "--source GisMeteo --token \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiaW1wb3J0ZXIiLCJBY2NvdW50SWQiOiIxMDIiLCJUb2tlblZlcnNpb24iOiIxIiwiQXBwbGljYXRpb24iOiLQmNC80L_QvtGA0YIg0YLQtdC80L_QtdGA0LDRgtGD0YAiLCJUb2tlbklkIjoiNjM1NSIsIm5iZiI6MTY2NjUwMDEzMSwiZXhwIjoxNzI5NzE3MjAwLCJpc3MiOiJMRVJTIEFNUiBTZXJ2ZXIiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjEwMDAwIn0.tQ9YtF7WaSFTNF4bHTMo-kn6GXDX5W46u7KmiNd3G10\" --incity Москва --server https://test.lers.ru\""
     }
   }
 }

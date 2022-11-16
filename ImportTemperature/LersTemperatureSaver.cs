@@ -6,12 +6,12 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-namespace ImportTemperatureMeteoInfo
+namespace ImportTemperature
 {
 	/// <summary>
 	/// Сохраняет считанные температуры на сервер ЛЭРС УЧЁТ.
 	/// </summary>
-	class LersTemperatureSaver: IDisposable
+	class LersTemperatureSaver : IDisposable
 	{
 		private readonly Uri _baseUri;
 
@@ -28,7 +28,7 @@ namespace ImportTemperatureMeteoInfo
 		}
 
 		public void Dispose() => _httpClient.Dispose();
-		
+
 		public async Task Authenticate(string login, string password)
 		{
 			var authController = new LoginClient(_baseUri.ToString(), _httpClient);
@@ -52,7 +52,7 @@ namespace ImportTemperatureMeteoInfo
 		/// <param name="missingOnly"></param>
 		/// <returns></returns>
 		public async Task Save(List<TemperatureRecord> records, Territory territory, bool missingOnly)
-		{			
+		{
 			if (territory == null)
 				throw new ArgumentNullException(nameof(territory));
 
@@ -93,7 +93,7 @@ namespace ImportTemperatureMeteoInfo
 		}
 
 		internal void SetToken(string token)
-		{ 
+		{
 			_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 		}
 
@@ -102,7 +102,7 @@ namespace ImportTemperatureMeteoInfo
 			var territoryClient = new TerritoriesClient(_baseUri.ToString(), _httpClient);
 
 			if (string.IsNullOrEmpty(territoryName))
-			{				
+			{
 				// Если территория не задана, возвращаем территорию по умолчанию (с идентификатором 1).
 
 				return await territoryClient.GetByIdAsync(1);

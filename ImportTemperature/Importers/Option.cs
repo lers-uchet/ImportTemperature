@@ -1,4 +1,4 @@
-﻿namespace ImportTemperatureMeteoInfo
+﻿namespace ImportTemperature.Importers
 {
 	/// <summary>
 	/// Информация о записях в контроле "select".
@@ -13,6 +13,6 @@
 		{
 			UrlPart = url;
 			Name = name;
-		}		
+		}
 	}
 }

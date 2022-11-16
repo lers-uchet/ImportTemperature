@@ -1,4 +1,4 @@
-﻿namespace ImportTemperatureMeteoInfo
+﻿namespace ImportTemperature
 {
 	/// <summary>
 	/// Источник данных для импорта

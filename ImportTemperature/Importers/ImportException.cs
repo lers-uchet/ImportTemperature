@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ImportTemperatureMeteoInfo.Importers
+namespace ImportTemperature.Importers
 {
 	class ImportException : Exception
 	{

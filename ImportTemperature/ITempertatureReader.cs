@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ImportTemperatureMeteoInfo
+namespace ImportTemperature
 {
 	/// <summary>
 	/// Предоставляет методы для чтения температуры с сайта.

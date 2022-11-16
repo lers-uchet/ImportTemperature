@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ImportTemperatureMeteoInfo
+namespace ImportTemperature
 {
 	/// <summary>
 	/// Запись со среднесуточной температурой.

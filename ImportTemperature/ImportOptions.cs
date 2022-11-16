@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace ImportTemperatureMeteoInfo
+namespace ImportTemperature
 {
 	/// <summary>
 	/// Параметры программы
@@ -10,13 +10,13 @@ namespace ImportTemperatureMeteoInfo
 		/// <summary>
 		/// Город, для которого импортируется температура.
 		/// </summary>
-		[Option(longName:"incity", Required = true)]
+		[Option(longName: "incity", Required = true)]
 		public string SourceCity { get; set; }
 
 		/// <summary>
 		/// Адрес сервера ЛЭРС УЧЁТ, на который импортируется температура.
 		/// </summary>
-		[Option(longName:"server", Required = true)]
+		[Option(longName: "server", Required = true)]
 		public string Server { get; set; }
 
 		/// <summary>
@@ -34,14 +34,14 @@ namespace ImportTemperatureMeteoInfo
 		/// <summary>
 		/// Токен для авторизации на сервере.
 		/// </summary>
-		[Option(longName:"token", Required = false)]
+		[Option(longName: "token", Required = false)]
 		public string Token { get; set; }
 
 		/// <summary>
 		/// Наименование территории, для которой сохраняется Тнв.
 		/// Если пустая - Тнв сохраняется для текущей территории.
 		/// </summary>
-		[Option(longName:"destTerritory", Default = "", Required = false)]
+		[Option(longName: "destTerritory", Default = "", Required = false)]
 		public string DestinationTerritory { get; set; }
 
 		/// <summary>
@@ -67,9 +67,9 @@ namespace ImportTemperatureMeteoInfo
 		/// <summary>
 		/// Сайт, с которого производится импорт температур.
 		/// </summary>
-		[Option(longName: "source", 
-				Default = ImportSource.MeteoInfo, 
-				Required = false, 
+		[Option(longName: "source",
+				Default = ImportSource.MeteoInfo,
+				Required = false,
 				HelpText = "Сайт, с которого производится импорт температур.")]
 		public ImportSource Source { get; set; }
 	}

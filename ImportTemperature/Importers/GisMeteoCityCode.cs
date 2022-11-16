@@ -1,4 +1,4 @@
-﻿namespace ImportTemperatureMeteoInfo.Importers
+﻿namespace ImportTemperature.Importers
 {
 	/// <summary>
 	/// Код города в системе GisMeteo.

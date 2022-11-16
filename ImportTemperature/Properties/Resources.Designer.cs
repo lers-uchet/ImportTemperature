@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ImportTemperatureMeteoInfo.Properties {
+namespace ImportTemperature.Properties {
     using System;
     
     
@@ -19,7 +19,7 @@ namespace ImportTemperatureMeteoInfo.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -39,7 +39,7 @@ namespace ImportTemperatureMeteoInfo.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ImportTemperatureMeteoInfo.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ImportTemperature.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -65,11 +65,11 @@ namespace ImportTemperatureMeteoInfo.Properties {
         ///Алтайское  12438
         ///Баево  126070
         ///Барнаул  4720
-        ///Барнаул  12995
+        ///Барнаул (а/п)  12995
         ///Новосиликатный  12433
         ///Южный  12432
         ///Белокуриха  11427
-        ///Бийск  12997
+        ///Бийск (а/п)  12997
         ///Бийск  4731
         ///Амурский  126101
         ///Благовещенка  12435
@@ -88,8 +88,7 @@ namespace ImportTemperatureMeteoInfo.Properties {
         ///Калманка  126359
         ///Аллак  126373
         ///Камень-на-Оби  4718
-        ///Ключи  126408
-        ///Косиха  12 [rest of string was truncated]&quot;;.
+        ///Ключи  126408 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Cities {
             get {

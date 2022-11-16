@@ -1,7 +1,6 @@
 ﻿using CommandLine;
+using ImportTemperature;
 using ImportTemperature.Importers;
-using ImportTemperatureMeteoInfo;
-using ImportTemperatureMeteoInfo.Importers;
 using System;
 using System.Threading.Tasks;
 

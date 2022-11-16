@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace ImportTemperatureMeteoInfo.Importers
+namespace ImportTemperature.Importers
 {
 	/// <summary>
 	/// Проводит разбор структуры страниц сайта meteoinfo.ru
@@ -57,7 +57,7 @@ namespace ImportTemperatureMeteoInfo.Importers
 			// Метки времени с идентификаторами приходят в виде строки содержащей подобные записи:
 			// <option value="1517263200">2019-05-21 22:00</option>
 			// Нам необходимо выделить идентификатор, для дальнейшего выполнения POST запросов и метку времени.
-			
+
 			var pattern = new Regex(@"\<option value\=\\""(?<dataId>[0-9]+)\\"">(?<dateTime>\d{4}-\d{2}-\d{2}\s\d\d:\d\d)\</option\>");
 
 			var matches = pattern.Matches(raw);

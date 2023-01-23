@@ -6,113 +6,112 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-namespace ImportTemperature
+namespace ImportTemperature;
+
+/// <summary>
+/// Сохраняет считанные температуры на сервер ЛЭРС УЧЁТ.
+/// </summary>
+class LersTemperatureSaver : IDisposable
 {
-	/// <summary>
-	/// Сохраняет считанные температуры на сервер ЛЭРС УЧЁТ.
-	/// </summary>
-	class LersTemperatureSaver : IDisposable
+	private readonly Uri _baseUri;
+
+	private readonly HttpClient _httpClient;
+
+	public LersTemperatureSaver(Uri baseUri)
 	{
-		private readonly Uri _baseUri;
+		_baseUri = baseUri;
 
-		private readonly HttpClient _httpClient;
-
-		public LersTemperatureSaver(Uri baseUri)
+		_httpClient = new HttpClient
 		{
-			_baseUri = baseUri;
+			BaseAddress = baseUri
+		};
+	}
 
-			_httpClient = new HttpClient
-			{
-				BaseAddress = baseUri
-			};
+	public void Dispose() => _httpClient.Dispose();
+
+	public async Task Authenticate(string login, string password)
+	{
+		var authController = new LoginClient(_baseUri.ToString(), _httpClient);
+
+		LoginResponseParameters response = await authController.LoginPlainAsync(new AuthenticatePlainRequestParameters
+		{
+			Application = "Утилита импорта температур",
+			Login = login,
+			Password = password
+		});
+
+		SetToken(response.Token);
+	}
+
+
+	/// <summary>
+	/// Сохраняет температуры наружного воздуха в указанную территорию.
+	/// </summary>
+	/// <param name="records"></param>
+	/// <param name="territory"></param>
+	/// <param name="missingOnly"></param>
+	/// <returns></returns>
+	public async Task Save(List<TemperatureRecord> records, Territory territory, bool missingOnly)
+	{
+		if (territory == null)
+			throw new ArgumentNullException(nameof(territory));
+
+		var weatherClient = new WeatherClient(_baseUri.ToString(), _httpClient);
+
+		IDictionary<DateTimeOffset, TerritoryOutdoorTemperature> existingTemperature = null;
+
+		if (missingOnly)
+		{
+			// Если импортируются только отсутствующие данные, получаем существующую температуру наружного воздуха.
+
+			existingTemperature = (await weatherClient.GetAsync(territory.Id))
+				.ToDictionary(x => x.Date);
 		}
 
-		public void Dispose() => _httpClient.Dispose();
+		var outdoorTemp = new List<TerritoryOutdoorTemperature>();
 
-		public async Task Authenticate(string login, string password)
+		foreach (var record in records)
 		{
-			var authController = new LoginClient(_baseUri.ToString(), _httpClient);
-
-			LoginResponseParameters response = await authController.LoginPlainAsync(new AuthenticatePlainRequestParameters
+			if (!missingOnly || !existingTemperature.ContainsKey(record.Date))
 			{
-				Application = "Утилита импорта температур",
-				Login = login,
-				Password = password
-			});
-
-			SetToken(response.Token);
-		}
-
-
-		/// <summary>
-		/// Сохраняет температуры наружного воздуха в указанную территорию.
-		/// </summary>
-		/// <param name="records"></param>
-		/// <param name="territory"></param>
-		/// <param name="missingOnly"></param>
-		/// <returns></returns>
-		public async Task Save(List<TemperatureRecord> records, Territory territory, bool missingOnly)
-		{
-			if (territory == null)
-				throw new ArgumentNullException(nameof(territory));
-
-			var weatherClient = new WeatherClient(_baseUri.ToString(), _httpClient);
-
-			IDictionary<DateTimeOffset, TerritoryOutdoorTemperature> existingTemperature = null;
-
-			if (missingOnly)
-			{
-				// Если импортируются только отсутствующие данные, получаем существующую температуру наружного воздуха.
-
-				existingTemperature = (await weatherClient.GetAsync(territory.Id))
-					.ToDictionary(x => x.Date);
-			}
-
-			var outdoorTemp = new List<TerritoryOutdoorTemperature>();
-
-			foreach (var record in records)
-			{
-				if (!missingOnly || !existingTemperature.ContainsKey(record.Date))
+				outdoorTemp.Add(new TerritoryOutdoorTemperature
 				{
-					outdoorTemp.Add(new TerritoryOutdoorTemperature
-					{
-						Date = new DateTimeOffset(record.Date, TimeSpan.FromHours(territory.TimeZoneOffset)),
-						Value = record.Temperature
-					});
-				}
-			}
-
-			if (outdoorTemp.Count <= 0)
-			{
-				Console.WriteLine("Нет данных для сохранения.");
-			}
-			else
-			{
-				await weatherClient.SetAsync(territory.Id, outdoorTemp);
+					Date = new DateTimeOffset(DateTime.SpecifyKind(record.Date, DateTimeKind.Unspecified), TimeSpan.FromHours(territory.TimeZoneOffset)),
+					Value = record.Temperature
+				});
 			}
 		}
 
-		internal void SetToken(string token)
+		if (outdoorTemp.Count <= 0)
 		{
-			_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+			Console.WriteLine("Нет данных для сохранения.");
 		}
-
-		public async Task<Territory> GetTerritory(string territoryName)
+		else
 		{
-			var territoryClient = new TerritoriesClient(_baseUri.ToString(), _httpClient);
+			await weatherClient.SetAsync(territory.Id, outdoorTemp);
+		}
+	}
 
-			if (string.IsNullOrEmpty(territoryName))
-			{
-				// Если территория не задана, возвращаем территорию по умолчанию (с идентификатором 1).
+	internal void SetToken(string token)
+	{
+		_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+	}
 
-				return await territoryClient.GetByIdAsync(1);
-			}
-			else
-			{
-				ICollection<Territory> list = await territoryClient.GetListAsync();
+	public async Task<Territory> GetTerritory(string territoryName)
+	{
+		var territoryClient = new TerritoriesClient(_baseUri.ToString(), _httpClient);
 
-				return list.FirstOrDefault(x => x.Name == territoryName);
-			}
+		if (string.IsNullOrEmpty(territoryName))
+		{
+			// Если территория не задана, возвращаем территорию по умолчанию (с идентификатором 1).
+
+			return await territoryClient.GetByIdAsync(1);
+		}
+		else
+		{
+			ICollection<Territory> list = await territoryClient.GetListAsync();
+
+			return list.FirstOrDefault(x => x.Name == territoryName);
 		}
 	}
 }

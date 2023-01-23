@@ -43,23 +43,23 @@ class GisMeteoReader : ITempertatureReader
 
 			cityCode = cityCodes[city].First();
 		}
-		
+
 		string url = $"/diary/{cityCode}";
-		
+
 		return LoadCityTemperatures(url, from, to);
 	}
 
 
-	/// <summary>
-	/// Записывает показания температуры в таблицу.
-	/// </summary>
-	/// <param name="cityTemperatureUrl">
-	/// Адрес страницы с таблицами среднесуточных температур.
-	/// </param>
-	/// <returns>
-	/// Возвращает таблицу со среднесуточными температурами за указанный период.
-	/// </returns>
-	private async Task<List<TemperatureRecord>> LoadCityTemperatures(string importUrl, DateTime from, DateTime to)
+    /// <summary>
+    /// Записывает показания температуры в таблицу.
+    /// </summary>
+    /// <param name="importUrl">
+    /// Адрес страницы с таблицами среднесуточных температур.
+    /// </param>
+    /// <returns>
+    /// Возвращает таблицу со среднесуточными температурами за указанный период.
+    /// </returns>
+    private async Task<List<TemperatureRecord>> LoadCityTemperatures(string importUrl, DateTime from, DateTime to)
 	{
 		var tempRecord = new List<TemperatureRecord>();
 
@@ -71,15 +71,15 @@ class GisMeteoReader : ITempertatureReader
 			string htmlMonthPage = await GetPageContent($"{importUrl}/{date.Year}/{date.Month}");
 
 			// Считываем температуру со страницы.
-			string temperature = FindTemperatureOnPage(date, htmlMonthPage);
+			float temperature = FindTemperatureOnPage(date, htmlMonthPage);
 
 			// Записываем температуру в таблицу.
 
 			tempRecord.Add(new TemperatureRecord
 			{
 				Date = date,
-				Temperature = Convert.ToSingle(temperature.Replace(".", ","))
-			});		
+				Temperature = temperature
+			});
 		}
 
 		return tempRecord;
@@ -99,7 +99,7 @@ class GisMeteoReader : ITempertatureReader
 	/// <returns>
 	/// Возвращает значение среднесуточной температуры по указанной дате.
 	/// </returns>
-	private static string FindTemperatureOnPage(DateTime date, string htmlMonthPage)
+	private static float FindTemperatureOnPage(DateTime date, string htmlMonthPage)
 	{
 		// Регулярное выражение для нахождения среднесуточной температуры на странице.
 		//  <td class=first>1</td>
@@ -122,7 +122,7 @@ class GisMeteoReader : ITempertatureReader
 			throw new ImportException(string.Format("Температура за дату: {0} не найдена.", date.ToString("d")));
 		}
 
-		return ((Convert.ToSingle(match.Groups[1].Value) + Convert.ToSingle(match.Groups[2].Value)) / 2).ToString();
+		return (ToSingle(match.Groups[1].Value) + ToSingle(match.Groups[2].Value)) / 2;
 	}
 
 
@@ -181,4 +181,13 @@ class GisMeteoReader : ITempertatureReader
 
 		return result.ToLookup(x => x.Name, y => y.Code);
 	}
+
+    private static float ToSingle(string value)
+    {
+        string decimalSeparator = System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+
+        return Convert.ToSingle(
+            value.Replace(".", decimalSeparator)
+                .Replace(",", decimalSeparator));
+    }
 }

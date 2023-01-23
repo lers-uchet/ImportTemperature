@@ -63,19 +63,30 @@ class GisMeteoReader : ITempertatureReader
 	{
 		var tempRecord = new List<TemperatureRecord>();
 
+		var monthContent = new Dictionary<DateTime, string>();
+
 		for (DateTime date = from; date < to; date = date.AddDays(1))
 		{
-			Console.WriteLine(String.Format("Считываем температуру за {0}", date.ToString("d")));
+			var readMonth = new DateTime(date.Year, date.Month, 1);
 
-			// Получаем текст страницы по указанной дате.
-			string htmlMonthPage = await GetPageContent($"{importUrl}/{date.Year}/{date.Month}");
+            if (!monthContent.TryGetValue(readMonth, out var htmlMonthPage))
+			{
+                Console.WriteLine($"Загружаем с сайта температуры за {readMonth:d}");
+
+                // Получаем текст страницы по указанной дате.
+                htmlMonthPage = await GetPageContent($"{importUrl}/{date.Year}/{date.Month}");
+
+				monthContent[readMonth] = htmlMonthPage;
+            }
 
 			// Считываем температуру со страницы.
 			float temperature = FindTemperatureOnPage(date, htmlMonthPage);
 
-			// Записываем температуру в таблицу.
+            Console.WriteLine(string.Format("Считана температура за {0}", date.ToString("d")));
 
-			tempRecord.Add(new TemperatureRecord
+            // Записываем температуру в таблицу.
+
+            tempRecord.Add(new TemperatureRecord
 			{
 				Date = date,
 				Temperature = temperature

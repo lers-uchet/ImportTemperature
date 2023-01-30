@@ -1,13 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <Description>Программа для импорта температур с сайта meteoinfo.ru в ЛЭРС УЧЁТ</Description>
     <Company>ООО "ЛЭРС УЧЁТ"</Company>
     <Copyright>Copyright © 2017 - 2023, ООО ЛЭРС УЧЁТ</Copyright>
     <Product>Система диспетчеризации ЛЭРС УЧЁТ</Product>
     <OutputType>Exe</OutputType>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

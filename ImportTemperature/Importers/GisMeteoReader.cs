@@ -80,17 +80,20 @@ class GisMeteoReader : ITempertatureReader
             }
 
 			// Считываем температуру со страницы.
-			float temperature = FindTemperatureOnPage(date, htmlMonthPage);
+			float? temperature = FindTemperatureOnPage(date, htmlMonthPage);
 
-            Console.WriteLine(string.Format("Считана температура за {0}", date.ToString("d")));
-
-            // Записываем температуру в таблицу.
-
-            tempRecord.Add(new TemperatureRecord
+			if (temperature != null)
 			{
-				Date = date,
-				Temperature = temperature
-			});
+				Console.WriteLine(string.Format("Считана температура за {0}", date.ToString("d")));
+
+				// Записываем температуру в таблицу.
+
+				tempRecord.Add(new TemperatureRecord
+				{
+					Date = date,
+					Temperature = temperature.Value
+				});
+			}
 		}
 
 		return tempRecord;
@@ -110,7 +113,7 @@ class GisMeteoReader : ITempertatureReader
 	/// <returns>
 	/// Возвращает значение среднесуточной температуры по указанной дате.
 	/// </returns>
-	private static float FindTemperatureOnPage(DateTime date, string htmlMonthPage)
+	private static float? FindTemperatureOnPage(DateTime date, string htmlMonthPage)
 	{
 		// Регулярное выражение для нахождения среднесуточной температуры на странице.
 		//  <td class=first>1</td>
@@ -133,7 +136,15 @@ class GisMeteoReader : ITempertatureReader
 			throw new ImportException(string.Format("Температура за дату: {0} не найдена.", date.ToString("d")));
 		}
 
-		return (ToSingle(match.Groups[1].Value) + ToSingle(match.Groups[2].Value)) / 2;
+		try
+		{
+			return (ToSingle(match.Groups[1].Value) + ToSingle(match.Groups[2].Value)) / 2;
+		}
+		catch (FormatException exc)
+		{
+			Console.Error.WriteLine($"Ошибка разбора температуры за {date}. {exc.Message}");
+			return null;
+		}
 	}
 
 

@@ -126,14 +126,15 @@ class GisMeteoReader : ITempertatureReader
 		//	<img src="http://st4.gisstatic.ru/static/diary/img/w7-bw.gif" class='print_icon' /><br />СЗ 2м/с</span></td>
 		//	<td class='first_in_group positive'>+27</td>
 
-		Regex regex = new Regex($@"<td\sclass=first>{date.Day}</td>[\w\s]+<td\sclass=.+>(.+)</td>\s+<td>.+</td>\s+<td>.+\s.+\s.+\s+<td\sclass=.+>(.+)</td>");
+		var regex = new Regex($@"<td\sclass=first>{date.Day}</td>[\w\s]+<td\sclass=.+>(.+)</td>\s+<td>.+</td>\s+<td>.+\s.+\s.+\s+<td\sclass=.+>(.+)</td>");
 
 		// Ищем совпадения на странице.
 		Match match = regex.Match(htmlMonthPage);
 
 		if (!match.Success)
 		{
-			throw new ImportException(string.Format("Температура за дату: {0} не найдена.", date.ToString("d")));
+			Console.Error.WriteLine(string.Format("Температура за дату: {0} не найдена.", date.ToString("d")));
+			return null;
 		}
 
 		try

@@ -140,17 +140,18 @@ class MemeoInfoReader : ITempertatureReader
 			{ "dop", "42" }
 		};
 
-		using (var client = new HttpClient())
-		{
-			var content = new FormUrlEncodedContent(values);
+        using var client = new HttpClient();
 
-			var response = await client.PostAsync(url, content);
+        var content = new FormUrlEncodedContent(values);
 
-			var responseString = await response.Content.ReadAsStringAsync();
+        var response = await client.PostAsync(url, content);
 
-			return JsonConvert.DeserializeObject<JArray>(responseString);
-		}
-	}
+		response.EnsureSuccessStatusCode();
+
+        var responseString = await response.Content.ReadAsStringAsync();
+
+        return JsonConvert.DeserializeObject<JArray>(responseString);
+    }
 
 	private static List<TemperatureRecord> AggregateTemperatures(IEnumerable<TemperatureRecord> input)
 	{

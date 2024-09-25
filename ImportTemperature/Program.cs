@@ -72,9 +72,6 @@ static async Task Entry(ImportOptions options)
 	catch (Exception exc)
 	{
 		Console.WriteLine($"Ошибка чтение среднесуточных температур. {exc.Message}");
-
-		Console.WriteLine($"{ Environment.NewLine }Нажмите любую клавишу для выхода...");
-		Console.ReadKey();
 	}
 }
 

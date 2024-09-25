@@ -2,7 +2,7 @@
   "profiles": {
     "ImportTemperature.Local": {
       "commandName": "Project",
-       "commandLineArgs": "--login admin --password admin --incity Хабаровск --server http://localhost:10000"
+       "commandLineArgs": "--login admin --password admin --incity Томск --server http://localhost:10000"
     },
 
     "ImportTemperature.Test": {

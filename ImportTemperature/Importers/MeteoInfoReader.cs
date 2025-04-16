@@ -36,9 +36,13 @@ class MeteoInfoReader : ITempertatureReader
 
 	private static async Task<string> GetCityId(string cityName)
 	{
-		var dataArray = await Post(HourArchiveHomeUrl, "0", "0");
+		var dataArray = await Post(HourArchiveHomeUrl, "0", "0")
+			?? throw new Exception("Не удалось разобрать страницу часового архива.");
 
-		var cityList = MeteoInfoParser.GetOptions(dataArray[4].ToString().Replace("[", string.Empty).Replace("]", string.Empty).Trim()).ToList();
+
+		var cityList = MeteoInfoParser.GetOptions(dataArray[4].ToString()
+			.Replace("[", string.Empty)
+			.Replace("]", string.Empty).Trim()).ToList();
 
 		// Ищем нормализованное имя города, чтобы не учитывать регистр.
 
@@ -54,9 +58,9 @@ class MeteoInfoReader : ITempertatureReader
 
 	private static async Task<string> GetTimeStamps(string cityId)
 	{
-		JArray dataArray = await Post(HourArchiveHomeUrl, cityId, "0");
+		JArray? dataArray = await Post(HourArchiveHomeUrl, cityId, "0");
 
-		return dataArray[2].ToString();
+		return dataArray?[2].ToString() ?? string.Empty;
 	}
 
 	/// <summary>
@@ -114,9 +118,9 @@ class MeteoInfoReader : ITempertatureReader
 
 	private static async Task<string> GetTimeData(string cityId, string dateId)
 	{
-		JArray dataArray = await Post(HourArchiveHomeUrl, cityId, dateId);
+		JArray? dataArray = await Post(HourArchiveHomeUrl, cityId, dateId);
 
-		if (dataArray[1].ToString().Replace("[", string.Empty).Replace("]", string.Empty).Trim() == dateId)
+		if (dataArray != null && dataArray[1].ToString().Replace("[", string.Empty).Replace("]", string.Empty).Trim() == dateId)
 		{
 			return dataArray[3].ToString();
 		}
@@ -124,7 +128,7 @@ class MeteoInfoReader : ITempertatureReader
 		return string.Empty;
 	}
 
-	private static async Task<JArray> Post(string url, string cityId, string dataId)
+	private static async Task<JArray?> Post(string url, string cityId, string dataId)
 	{
 		// Раньше сайт возвращал всю страницу сразу. Теперь список меток времени и температуры приходят отдельным POST запросом.
 		// Причём всегда возвращается и список меток времени и запрошенная температура.

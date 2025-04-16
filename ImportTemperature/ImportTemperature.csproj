@@ -9,6 +9,7 @@
     <OutputType>Exe</OutputType>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Nullable>enable</Nullable>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>

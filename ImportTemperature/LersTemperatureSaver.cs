@@ -53,12 +53,11 @@ class LersTemperatureSaver : IDisposable
 	/// <returns></returns>
 	public async Task Save(List<TemperatureRecord> records, Territory territory, bool missingOnly)
 	{
-		if (territory == null)
-			throw new ArgumentNullException(nameof(territory));
+		ArgumentNullException.ThrowIfNull(territory);
 
 		var weatherClient = new WeatherClient(_baseUri.ToString(), _httpClient);
 
-		IDictionary<DateTimeOffset, TerritoryOutdoorTemperature> existingTemperature = null;
+		IDictionary<DateTimeOffset, TerritoryOutdoorTemperature>? existingTemperature = null;
 
 		if (missingOnly)
 		{
@@ -72,7 +71,7 @@ class LersTemperatureSaver : IDisposable
 
 		foreach (var record in records)
 		{
-			if (!missingOnly || !existingTemperature.ContainsKey(record.Date))
+			if (existingTemperature  == null || !existingTemperature.ContainsKey(record.Date))
 			{
 				outdoorTemp.Add(new TerritoryOutdoorTemperature
 				{
@@ -97,7 +96,7 @@ class LersTemperatureSaver : IDisposable
 		_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 	}
 
-	public async Task<Territory> GetTerritory(string territoryName)
+	public async Task<Territory?> GetTerritory(string? territoryName)
 	{
 		var territoryClient = new TerritoriesClient(_baseUri.ToString(), _httpClient);
 

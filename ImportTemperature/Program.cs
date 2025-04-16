@@ -13,7 +13,12 @@ parser.ParseArguments<ImportOptions>(args)
 	});
 
 static async Task Entry(ImportOptions options)
-{			
+{
+	if (string.IsNullOrEmpty(options.Server))
+	{
+		throw new Exception("Не задан адрес сервера ЛЭРС.");
+	}
+
 	using var tempSaver = new LersTemperatureSaver(new Uri(options.Server));
 
 	try
@@ -43,6 +48,11 @@ static async Task Entry(ImportOptions options)
 
 		if (string.IsNullOrEmpty(options.Token))
 		{
+			if (string.IsNullOrEmpty(options.Login) || string.IsNullOrEmpty(options.Password))
+			{
+				throw new Exception("Нужно задать токен или логин и пароль.");
+			}
+
 			await tempSaver.Authenticate(options.Login, options.Password);
 		}
 		else
@@ -52,16 +62,17 @@ static async Task Entry(ImportOptions options)
 
 		// Определяем территорию для импорта.
 
-		var territory = await tempSaver.GetTerritory(options.DestinationTerritory);
-
-		if (territory == null)
-		{
-			throw new Exception($"Территория '{options.DestinationTerritory}' не найдена на сервере.");
-		}
+		var territory = await tempSaver.GetTerritory(options.DestinationTerritory) 
+			?? throw new Exception($"Территория '{options.DestinationTerritory}' не найдена на сервере.");
 
 		Console.WriteLine("Чтение среднесуточных температур с сайта.");
 
 		// Считываем температуры с сайта.
+
+		if (string.IsNullOrEmpty(options.SourceCity))
+		{
+			throw new Exception("Не указан город для импорта температур.");
+		}
 
 		var temps = await importer.ReadTemperatures(options.SourceCity, territory.TimeZoneOffset, importStart, importEnd);
 

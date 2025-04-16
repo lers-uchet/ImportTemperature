@@ -74,7 +74,7 @@ class PogodaIKlimatReader : ITempertatureReader
 		var result = new List<TemperatureRecord>();
 
 		int month = 0;
-		Dictionary<DateTime, float> monthTemperatures = null;
+		Dictionary<DateTime, float>? monthTemperatures = null;
 
 		for (DateTime date = from; date <= to; date = date.AddDays(1))
 		{
@@ -113,7 +113,7 @@ class PogodaIKlimatReader : ITempertatureReader
 
 		while (true)
 		{
-			string line = stringReader.ReadLine()?.Trim();
+			string? line = stringReader.ReadLine()?.Trim();
 
 			if (line == null)
 			{

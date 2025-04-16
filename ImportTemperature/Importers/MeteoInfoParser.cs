@@ -41,7 +41,7 @@ namespace ImportTemperature.Importers
 
 			if (matches.Count == 0)
 			{
-				yield return null;
+				yield break;
 			}
 
 			foreach (Match match in matches)

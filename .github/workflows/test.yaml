@@ -8,8 +8,6 @@ on:
 jobs:
   Tests:
     runs-on: ubuntu-latest
-    defaults:
-      shell: powershell
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4

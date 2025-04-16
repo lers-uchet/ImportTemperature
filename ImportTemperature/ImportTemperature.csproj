@@ -2,17 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Description>Программа для импорта температур с сайта meteoinfo.ru в ЛЭРС УЧЁТ</Description>
+    <Description>Программа для импорта температур с сайтов погоды в ЛЭРС УЧЁТ</Description>
     <Company>ООО "ЛЭРС УЧЁТ"</Company>
-    <Copyright>Copyright © 2017 - 2024, ООО ЛЭРС УЧЁТ</Copyright>
+    <Copyright>Copyright © 2017 - 2025, ООО ЛЭРС УЧЁТ</Copyright>
     <Product>Система диспетчеризации ЛЭРС УЧЁТ</Product>
     <OutputType>Exe</OutputType>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Nullable>enable</Nullable>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommandLineParser" Version="2.7.82" />    
+    <PackageReference Include="CommandLineParser" Version="2.7.82" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />    
   </ItemGroup>
 
@@ -30,4 +31,12 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+
+	<Target Name="PackZip" AfterTargets="Publish">
+		<ZipDirectory
+			SourceDirectory="$(PublishDir)"
+			DestinationFile="$(MSBuildProjectDirectory)/../artifacts/$(MSBuildProjectName).zip"
+			Overwrite="true"
+		></ZipDirectory>
+	</Target>
 </Project>

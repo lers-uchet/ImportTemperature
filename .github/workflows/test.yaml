@@ -1,0 +1,23 @@
+name: Тестирование
+run-name: "Запуск модульных и интеграционных тестов: ${{ github.actor }}"
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+jobs:
+  Tests:
+    runs-on: ubuntu-latest
+    defaults:
+      shell: powershell
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+      - name: Setup dotnet 8.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0
+      - name: Full tests
+        run: dotnet test ImportTemperature.Tests

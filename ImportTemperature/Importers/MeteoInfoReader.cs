@@ -11,7 +11,7 @@ namespace ImportTemperature.Importers;
 /// <summary>
 /// Реализует чтение среднесуточных температур с сайта MeteoInfo.
 /// </summary>
-class MemeoInfoReader : ITempertatureReader
+class MeteoInfoReader : ITempertatureReader
 {
 	/// <summary>
 	/// Адрес, по которому будет выполнятся POST запросы, для получения идентификаторов меток времени и данные по температуре.
@@ -42,7 +42,7 @@ class MemeoInfoReader : ITempertatureReader
 
 		// Ищем нормализованное имя города, чтобы не учитывать регистр.
 
-		var cityInfo = cityList.Find(x => x.Name.ToUpperInvariant().Contains(cityName.ToUpperInvariant()));
+		var cityInfo = cityList.Find(x => x.Name.Contains(cityName, StringComparison.InvariantCultureIgnoreCase));
 
 		if (cityInfo == null)
 		{

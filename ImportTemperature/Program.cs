@@ -72,6 +72,9 @@ static async Task Entry(ImportOptions options)
 	catch (Exception exc)
 	{
 		Console.WriteLine($"Ошибка чтение среднесуточных температур. {exc.Message}");
+
+		Console.WriteLine($"{ Environment.NewLine }Нажмите любую клавишу для выхода...");
+		Console.ReadKey();
 	}
 }
 
@@ -84,7 +87,7 @@ static async Task Entry(ImportOptions options)
 static ITempertatureReader CreateReader(ImportSource source)
 => source switch
 {
-	ImportSource.MeteoInfo => new MemeoInfoReader(),
+	ImportSource.MeteoInfo => new MeteoInfoReader(),
 	ImportSource.PogodaIKlimat => new PogodaIKlimatReader(),
 	ImportSource.GisMeteo => new GisMeteoReader(),
 	_ => throw new ArgumentOutOfRangeException(nameof(source))

@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Description>Программа для импорта температур с сайта meteoinfo.ru в ЛЭРС УЧЁТ</Description>
+    <Description>Программа для импорта температур с сайтов погоды в ЛЭРС УЧЁТ</Description>
     <Company>ООО "ЛЭРС УЧЁТ"</Company>
-    <Copyright>Copyright © 2017 - 2024, ООО ЛЭРС УЧЁТ</Copyright>
+    <Copyright>Copyright © 2017 - 2025, ООО ЛЭРС УЧЁТ</Copyright>
     <Product>Система диспетчеризации ЛЭРС УЧЁТ</Product>
     <OutputType>Exe</OutputType>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

@@ -82,7 +82,7 @@ public class PogodaIKlimatReader : ITempertatureReader
 			{
 				Console.WriteLine($"Загружаем страницу за {date}");
 
-				monthTemperatures = await ReadAtMonth(cityId, from);
+				monthTemperatures = await ReadAtMonth(cityId, date);
 
 				month = date.Month;
 			}

@@ -16,10 +16,10 @@ public class PogodaIKlimatTests
 
 		Assert.Equal(2, temperatures.Count);
 
-		Assert.Equal(9.9, temperatures[0].Temperature);
-		Assert.Equal(new(2035, 3, 31), temperatures[0].Date);
+		Assert.Equal(9.9, temperatures[0].Temperature, 0.01);
+		Assert.Equal(new(2025, 3, 31), temperatures[0].Date);
 
-		Assert.Equal(9.9, temperatures[1].Temperature);
-		Assert.Equal(new(2035, 4, 1), temperatures[1].Date);
+		Assert.Equal(9.8, temperatures[1].Temperature, 0.01);
+		Assert.Equal(new(2025, 4, 1), temperatures[1].Date);
 	}
 }

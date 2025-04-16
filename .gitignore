@@ -7,3 +7,5 @@
 **/Release
 *.user
 /build/temp
+!/artifacts/.gitkeep
+/artifacts/**

@@ -2,12 +2,6 @@
 	"version": 1,
 	"isRoot": true,
 	"tools": {
-		"cake.tool": {
-			"version": "2.2.0",
-			"commands": [
-				"dotnet-cake"
-			]
-		},
 		"NSWag.ConsoleCore": {
 			"version": "13.16.1",
 			"commands": [

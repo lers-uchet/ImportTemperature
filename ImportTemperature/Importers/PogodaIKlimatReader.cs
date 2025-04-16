@@ -11,7 +11,7 @@ namespace ImportTemperature.Importers;
 /// <summary>
 /// Считывает температуру с сайта Погода и Климат.
 /// </summary>
-class PogodaIKlimatReader : ITempertatureReader
+public class PogodaIKlimatReader : ITempertatureReader
 {
 	private const string CityListUrl = "monitor.php";
 

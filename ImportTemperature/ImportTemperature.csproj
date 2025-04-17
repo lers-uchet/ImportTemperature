@@ -33,6 +33,8 @@
     </EmbeddedResource>
   </ItemGroup>
 
+	<!--
+	Упаковка производится через github actions
 	<Target Name="PackZip" AfterTargets="Publish">
 		<ZipDirectory
 			SourceDirectory="$(PublishDir)"
@@ -40,4 +42,6 @@
 			Overwrite="true"
 		></ZipDirectory>
 	</Target>
+	-->
+	
 </Project>

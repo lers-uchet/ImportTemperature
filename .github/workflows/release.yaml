@@ -1,0 +1,29 @@
+name: Тестирование
+run-name: "Запуск модульных и интеграционных тестов"
+on: workflow_dispatch
+jobs:
+  BuildRelease:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        operating-system: [ 'win-x86' ]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+      - name: Setup dotnet 8.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0
+      - name: Build artifacts
+        run: dotnet publish ./ImportTemperature --configuration Release --self-contained true -p:PublishSingleFile=true -r ${{ operating-system }}
+      - name: Rename artifacts
+        run: mv artifacts/ImportTemperature.zip artifacts/ImportTemperature.${{operating-system}}.zip
+  UploadArtifacts:
+    steps:
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          path: artifacts/*.zip
+          overwrite: true

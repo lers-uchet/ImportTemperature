@@ -10,6 +10,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Nullable>enable</Nullable>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<Version>2.4</Version>
   </PropertyGroup>
 
   <ItemGroup>

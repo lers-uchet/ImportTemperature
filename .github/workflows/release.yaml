@@ -17,9 +17,9 @@ jobs:
         with:
           dotnet-version: 8.0
       - name: Build artifacts
-        run: dotnet publish ./ImportTemperature --configuration Release --self-contained true -p:PublishSingleFile=true -r ${{ operating-system }}
+        run: dotnet publish ./ImportTemperature --configuration Release --self-contained true -p:PublishSingleFile=true -r ${{ matrix.operating-system }}
       - name: Rename artifacts
-        run: mv artifacts/ImportTemperature.zip artifacts/ImportTemperature.${{operating-system}}.zip
+        run: mv artifacts/ImportTemperature.zip artifacts/ImportTemperature.${{matrix.operating-system}}.zip
   UploadArtifacts:
     steps:
       - name: Upload artifacts
